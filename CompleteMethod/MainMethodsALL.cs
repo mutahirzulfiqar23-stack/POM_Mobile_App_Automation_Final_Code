@@ -194,7 +194,7 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
 
 
             // dashboard.ClickThirdWidgetIcon();
-            dashboardx.EnterAmount200();
+            dashboardx.EnterAmount5();
 
             // Click Pay button
             dashboardy.ScrollAndClickPayButton();

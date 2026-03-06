@@ -304,7 +304,7 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
 
             element.Click();      // Focus on field
             element.Clear();      // Clear existing value
-            element.SendKeys("200"); // Enter 200
+            element.SendKeys("2"); // Enter 200
         }
 
         // ============================================================

@@ -196,7 +196,7 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
         // ---------- Amount Input Field ----------
         private By etAmountBy =
             MobileBy.Id("com.yappakistan.app.stage:id/etAmount");
-        public void EnterAmount200()
+        public void EnterAmount5()
         {
             IWebElement amountField = wait.Until(d =>
             {
@@ -213,7 +213,7 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
 
             amountField.Click();          // Focus
             amountField.Clear();          // Ensure empty
-            amountField.SendKeys("200");  // Enter 200
+            amountField.SendKeys("5");  // Enter 200
         }
         // ---------- Pay / Confirm Button ----------
         private By btnConfirmBy =

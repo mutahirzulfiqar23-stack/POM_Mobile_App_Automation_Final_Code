@@ -1,40 +1,67 @@
 ﻿using OpenQA.Selenium.Appium.Android;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace POM_Mobile_App_Automate_Stage.Utilities
 {
     public static class ScreenRecorderHelper
     {
-        private static readonly string VideoFolder = @"C:\ScreenshotFailed";
+        private static readonly string VideoFolder = @"D:\ScreenshotFailed";
 
         public static void StartRecording(AndroidDriver driver)
         {
             if (driver == null)
                 throw new ArgumentNullException(nameof(driver));
 
-            driver.StartRecordingScreen();
-            Console.WriteLine("Screen recording started...");
+            try
+            {
+                // Options for Appium recording
+                var options = new Dictionary<string, object>
+                {
+                    { "timeLimit", "1800" }, // 30 min
+                    { "videoSize", "1280x720" },
+                    { "bitRate", 5000000 }
+                };
+
+                driver.ExecuteScript("mobile: startRecordingScreen", options);
+                Console.WriteLine("🎬 Appium recording started...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error starting recording: " + ex.Message);
+            }
         }
 
         public static void StopRecordingAndSave(AndroidDriver driver, string testName)
         {
-            if (driver == null)
-                throw new ArgumentNullException(nameof(driver));
+            if (driver == null) return;
 
-            if (!Directory.Exists(VideoFolder))
-                Directory.CreateDirectory(VideoFolder);
+            try
+            {
+                var result = driver.ExecuteScript("mobile: stopRecordingScreen");
+                if (result == null) return;
 
-            string base64Video = driver.StopRecordingScreen();
+                string base64Video = result.ToString();
+                if (string.IsNullOrEmpty(base64Video)) return;
 
-            byte[] videoBytes = Convert.FromBase64String(base64Video);
+                byte[] videoBytes = Convert.FromBase64String(base64Video);
 
-            string fileName = $"{testName}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4";
-            string filePath = Path.Combine(VideoFolder, fileName);
+                if (!Directory.Exists(VideoFolder))
+                    Directory.CreateDirectory(VideoFolder);
 
-            File.WriteAllBytes(filePath, videoBytes);
+                string filePath = Path.Combine(
+                    VideoFolder,
+                    $"{testName}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4"
+                );
 
-            Console.WriteLine($"Screen recording saved: {filePath}");
+                File.WriteAllBytes(filePath, videoBytes);
+                Console.WriteLine("✅ Video saved: " + filePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error stopping recording: " + ex.Message);
+            }
         }
     }
 }

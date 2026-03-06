@@ -7,7 +7,7 @@ namespace POM_Mobile_App_Automate_Stage.Utilities
 {
     public static class ScreenshotHelper
     {
-        private static readonly string ScreenshotFolder = @"C:\ScreenshotFailed";
+        private static readonly string ScreenshotFolder = @"D:\ScreenshotFailed";
 
         public static string CaptureScreenshot(AndroidDriver driver, string testName)
         {
