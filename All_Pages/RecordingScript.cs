@@ -245,7 +245,7 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
         // ─────────────────────────────────────────────────────────────────────
 
         /// <summary>Local folder where the final merged video is saved.</summary>
-        private const string LocalVideoFolder = @"D:\ScreenshotFailed\CompleteTestVideo";
+        private const string LocalVideoFolder = @"D:\ScreenshotFailed\ScriptVideo";
 
         /// <summary>
         /// Seconds per segment. Android's hard limit is 180 s; we rotate at 170 s
@@ -260,7 +260,9 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
         private const string AdbPath = "adb";
 
         /// <summary>FFmpeg executable name (assumed to be on PATH).</summary>
-        private const string FfmpegPath = "ffmpeg";
+      //  private const string FfmpegPath = "ffmpeg";
+     //   private const string FfmpegPath = @"C:\ffmpeg\bin\ffmpeg.exe";
+        private const string FfmpegPath = @"C:\ffmpeg-8.0.1-essentials_build\ffmpeg-8.0.1-essentials_build\bin\ffmpeg.exe";
 
         // ─────────────────────────────────────────────────────────────────────
         // PRIVATE STATE
