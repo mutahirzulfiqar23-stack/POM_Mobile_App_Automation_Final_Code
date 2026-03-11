@@ -789,9 +789,11 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
            // //Thread.Sleep(5000);
            // // Tap "More" tab
             security.ClickChangePasscode();     // Click "Change Passcode"
-           //// // Test change for Jenkins CI
+                                                //// // Test change for Jenkins CI
 
+            //// // Test change for Jenkins CI
 
+            //// // Test change for Jenkins CI
             forgotPassword.ClickForgotSecurityPin();
             forgotPassword.CreateNewPin("3023");
             Thread.Sleep(5000);
