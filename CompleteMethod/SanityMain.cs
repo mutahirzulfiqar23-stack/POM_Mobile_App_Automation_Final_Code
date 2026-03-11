@@ -151,7 +151,8 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             // =============================
             // Error Message Validation
             // =============================
-
+            // Error Message Validation
+            // =============================
             // Capture the displayed error message text
             string errorText = textCompare.GetErrorMessage();
             Console.WriteLine("Error message is: " + errorText);
