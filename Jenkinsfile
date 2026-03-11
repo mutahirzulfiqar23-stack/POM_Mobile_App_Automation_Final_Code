@@ -1,62 +1,47 @@
 pipeline {
     agent any
 
+    tools {
+        allure 'Allure'
+    }
+
     environment {
-        TEST_PROJECT = 'C:/Users/Mutahir/source/repos/POM_Mobile_App_Automate_Stage/SanityMain.csproj'
-        ALLURE_RESULTS = 'allure-results'
+        DOTNET_PATH = "C:/Program Files/dotnet/dotnet.exe"
+        ALLURE_RESULTS = "allure-results"
+        CSPROJ_PATH = "C:/Users/Mutahir/source/repos/POM_Mobile_App_Automate_Stage/POM_Mobile_App_Automate_Stage.csproj"
     }
 
     stages {
-        stage('Restore NuGet Packages') {
+
+        stage('Checkout Code') {
             steps {
-                echo 'Restoring NuGet packages...'
-                bat "dotnet restore ${env.TEST_PROJECT}"
+                git 'https://github.com/mutahirzulfiqar23-stack/POM_Mobile_App_Automation_Final_Code.git'
+            }
+        }
+
+        stage('Restore Dependencies') {
+            steps {
+                bat "\"${DOTNET_PATH}\" restore \"${CSPROJ_PATH}\""
             }
         }
 
         stage('Build Project') {
             steps {
-                echo 'Building the project...'
-                bat "dotnet build ${env.TEST_PROJECT} --configuration Release"
+                bat "\"${DOTNET_PATH}\" build \"${CSPROJ_PATH}\""
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Automation Tests') {
             steps {
-                echo 'Running Appium tests with NUnit...'
-                bat "dotnet test ${env.TEST_PROJECT} --configuration Release --logger:\"nunit;LogFilePath=${env.ALLURE_RESULTS}\\TestResult.xml\" --results-directory ${env.ALLURE_RESULTS}"
+                bat "\"${DOTNET_PATH}\" test \"${CSPROJ_PATH}\" --filter FullyQualifiedName~SanityMain --logger trx --results-directory ${ALLURE_RESULTS}"
             }
         }
 
-        stage('Generate Allure Report') {
-            steps {
-                echo 'Generating Allure report...'
-                bat "allure generate ${env.ALLURE_RESULTS} --clean -o ${env.ALLURE_RESULTS}/report"
-            }
-        }
-
-        stage('Publish Allure Report') {
-            steps {
-                echo 'Publishing Allure report in Jenkins...'
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: "${env.ALLURE_RESULTS}"]]
-                ])
-            }
-        }
     }
 
     post {
         always {
-            echo 'Cleaning workspace...'
-            cleanWs()
-        }
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for errors.'
+            allure includeProperties: false, jdk: '', results: [[path: "${ALLURE_RESULTS}"]]
         }
     }
 }
