@@ -138,6 +138,9 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             // =============================
             // Passcode Verification
             // =============================
+            // =============================
+            // Passcode Verification
+            // =============================
 
             // Enter 4-digit passcode
             passcode.EnterPasscode("0987");
