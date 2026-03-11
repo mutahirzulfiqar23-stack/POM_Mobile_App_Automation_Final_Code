@@ -7,7 +7,6 @@ pipeline {
 
     environment {
         ALLURE_RESULTS = "allure-results"
-        CSPROJ_PATH = "C:/Users/Mutahir/source/repos/POM_Mobile_App_Automate_Stage/POM_Mobile_App_Automate_Stage.csproj"
     }
 
     stages {
@@ -20,27 +19,28 @@ pipeline {
 
         stage('Clean Workspace') {
             steps {
+                // Clean all temp files safely
                 bat 'git reset --hard'
                 bat 'git clean -fdx'
+                bat 'dotnet nuget locals all --clear'
             }
         }
 
         stage('Restore NuGet Packages') {
             steps {
-                bat 'dotnet nuget locals all --clear'
-                bat "dotnet restore \"${CSPROJ_PATH}\""
+                bat 'dotnet restore'
             }
         }
 
         stage('Build Project') {
             steps {
-                bat "dotnet build \"${CSPROJ_PATH}\" --no-restore"
+                bat 'dotnet build --no-restore'
             }
         }
 
         stage('Run Automation Tests') {
             steps {
-                bat "dotnet test \"${CSPROJ_PATH}\" --no-build --logger trx --results-directory ${ALLURE_RESULTS}"
+                bat 'dotnet test --no-build --logger trx --results-directory allure-results'
             }
         }
 
@@ -48,7 +48,7 @@ pipeline {
 
     post {
         always {
-            allure includeProperties: false, jdk: '', results: [[path: "${ALLURE_RESULTS}"]]
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
         }
     }
 }
