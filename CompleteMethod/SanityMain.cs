@@ -786,10 +786,10 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             Thread.Sleep(5000);
             uiux.ClickProfile();
 
-            //Thread.Sleep(5000);
-            // Tap "More" tab
+           // //Thread.Sleep(5000);
+           // // Tap "More" tab
             security.ClickChangePasscode();     // Click "Change Passcode"
-
+           //// // Test change for Jenkins CI
 
 
             forgotPassword.ClickForgotSecurityPin();
@@ -849,7 +849,7 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             //////Re - login with biometric is successful.
             //////App correctly falls back to PIN if biometric disabled.
 
-
+            /////
             signInPage.EnterMobileNumber("3364646412");
             signInPage.DoubleClickRememberSwitch();
             signInPage.ClickSignInButton();
