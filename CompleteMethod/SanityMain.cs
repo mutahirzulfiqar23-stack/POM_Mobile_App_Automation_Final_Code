@@ -21,6 +21,7 @@ using DriverManager = POM_Mobile_App_Automate_Stage.DriverSetup.WebDriver;
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
 //using static System.Runtime.InteropServices.JavaScript.JSType;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace POM_Mobile_App_Automate_Stage.CompleteMethod
 {
@@ -48,9 +49,10 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             Console.WriteLine("App launched successfully.");
             // ── START RECORDING ──────────────────────────────────────
             // Video will be saved to D:\ScreenshotFailed\CompleteTestVideo
+            // Video will be saved to D:\ScreenshotFailed\CompleteTestVideo
             RecordingScript.StartRecording(driver);
-
-
+            // Video will be saved to D:\ScreenshotFailed\CompleteTestVideo
+            /////asd///asd//a/sd
         }
 
         [Test]

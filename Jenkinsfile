@@ -6,9 +6,8 @@ pipeline {
     }
 
     environment {
-        DOTNET_PATH = "C:/Program Files/dotnet/dotnet.exe"
         ALLURE_RESULTS = "allure-results"
-        PROJECT = "POM_Mobile_App_Automate_Stage.csproj"
+        CSPROJ_PATH = "C:/Users/Mutahir/source/repos/POM_Mobile_App_Automate_Stage/POM_Mobile_App_Automate_Stage.csproj"
     }
 
     stages {
@@ -19,28 +18,29 @@ pipeline {
             }
         }
 
-        stage('Reset Workspace') {
+        stage('Clean Workspace') {
             steps {
                 bat 'git reset --hard'
-                bat 'git clean -fd'
+                bat 'git clean -fdx'
             }
         }
 
-        stage('Restore Dependencies') {
+        stage('Restore NuGet Packages') {
             steps {
-                bat "\"${DOTNET_PATH}\" restore ${PROJECT}"
+                bat 'dotnet nuget locals all --clear'
+                bat "dotnet restore \"${CSPROJ_PATH}\""
             }
         }
 
         stage('Build Project') {
             steps {
-                bat "\"${DOTNET_PATH}\" build ${PROJECT} --no-restore"
+                bat "dotnet build \"${CSPROJ_PATH}\" --no-restore"
             }
         }
 
         stage('Run Automation Tests') {
             steps {
-                bat "\"${DOTNET_PATH}\" test ${PROJECT} --no-build --filter FullyQualifiedName~SanityMain --logger trx --results-directory ${ALLURE_RESULTS}"
+                bat "dotnet test \"${CSPROJ_PATH}\" --no-build --logger trx --results-directory ${ALLURE_RESULTS}"
             }
         }
 
