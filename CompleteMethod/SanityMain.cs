@@ -20,6 +20,8 @@ using DriverManager = POM_Mobile_App_Automate_Stage.DriverSetup.WebDriver;
 
 //using static System.Runtime.InteropServices.JavaScript.JSType;
 
+//using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace POM_Mobile_App_Automate_Stage.CompleteMethod
 {
     internal class SanityMain

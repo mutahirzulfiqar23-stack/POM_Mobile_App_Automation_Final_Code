@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9a0cd043-a5db-4daf-b849-16b85fce3ead" name="Mutahir@YAP-L-41-WIN11- 2026-03-11 13:24:44" runUser="YAP-L-41-WIN11-\Mutahir" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-03-11T13:24:44.7473223+05:00" queuing="2026-03-11T13:24:44.7473228+05:00" start="2026-03-11T13:23:38.4442317+05:00" finish="2026-03-11T13:26:52.6790177+05:00" />
+  <TestSettings name="default" id="1a2a9fb6-53b0-4bb4-9265-3dd7588f5d55">
+    <Deployment runDeploymentRoot="Mutahir_YAP-L-41-WIN11-_2026-03-11_13_24_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0e25009a-a639-445d-88c4-a5a00637a7c7" testId="565c81ce-f46c-5348-7689-67980c5ea5e1" testName="CompleteSignInFlow" computerName="YAP-L-41-WIN11-" duration="00:02:07.9043380" startTime="2026-03-11T13:24:44.6787865+05:00" endTime="2026-03-11T13:26:52.5831233+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e25009a-a639-445d-88c4-a5a00637a7c7">
+      <Output>
+        <StdOut>App launched successfully.&#xD;
+[RecordingScript] Starting continuous screen recording...&#xD;
+[RecordingScript] Temp segments folder: C:\Users\Mutahir\AppData\Local\Temp\adb_rec_20260311_132450&#xD;
+[RecordingScript] Recording segment 1 → /sdcard/rec_seg_0000.mp4&#xD;
+Mobile number entered: 3211111111&#xD;
+Remember ID switch toggled twice.&#xD;
+Sign In button clicked.&#xD;
+Digit 0 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 7 clicked.&#xD;
+Passcode entered: 0987&#xD;
+Sign In button clicked after entering passcode.&#xD;
+Error message is: User not found for the specified user type&#xD;
+Expected: 'User not found for the specified user type', Actual: 'User not found for the specified user type', Match: True&#xD;
+Does the error match? True&#xD;
+Back button clicked.&#xD;
+Mobile number entered: 3364646412&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 3 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Passcode entered: 3889&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button clicked.&#xD;
+"Yes, keep me updated" button clicked.&#xD;
+Drawer icon clicked.&#xD;
+Drawer icon clicked.&#xD;
+Logout option clicked.&#xD;
+Logout confirmed.&#xD;
+Mobile number entered: 3364646412&#xD;
+Remember ID switch toggled twice.&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 3 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Passcode entered: 3889&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button clicked.&#xD;
+"Yes, keep me updated" button clicked.&#xD;
+[RecordingScript] Stopping recording...&#xD;
+[RecordingScript] Pulling segment 1...&#xD;
+[RecordingScript] Segment 1 pulled (13475 KB)&#xD;
+[RecordingScript] Rotator loop finished.&#xD;
+[RecordingScript] Video saved to: D:\ScreenshotFailed\ScriptVideo\CompleteSignInFlow_20260311_132651.mp4&#xD;
+[TearDown] Test FAILED – capturing screenshot.&#xD;
+[RecordingFailedScreenshots] Screenshot saved to: D:\ScreenshotFailed\FAILED_CompleteSignInFlow_20260311_132651.png&#xD;
+TearDown executed. Driver left open, app remains running.</StdOut>
+        <ErrorInfo>
+          <Message>OpenQA.Selenium.WebDriverTimeoutException : Timed out after 15 seconds&#xD;
+  ----&gt; OpenQA.Selenium.NoSuchElementException : An element could not be located on the page using the given search parameters.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception</Message>
+          <StackTrace>   at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition, CancellationToken token)&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.DashboardCompleteBalanceAvailable.EnterAmount5() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\DashboardCompleteBalanceAvailable..cs:line 201&#xD;
+   at POM_Mobile_App_Automate_Stage.CompleteMethod.SanityMain.CompleteSignInFlow() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\CompleteMethod\SanityMain.cs:line 272&#xD;
+--NoSuchElementException&#xD;
+   at OpenQA.Selenium.WebDriver.UnpackAndThrowOnError(Response errorResponse, String commandToExecute)&#xD;
+   at OpenQA.Selenium.WebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)&#xD;
+   at OpenQA.Selenium.WebDriver.FindElement(String mechanism, String value)&#xD;
+   at OpenQA.Selenium.Appium.AppiumDriver.FindElement(String by, String value)&#xD;
+   at OpenQA.Selenium.Appium.MobileBy.FindElement(ISearchContext context)&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.DashboardCompleteBalanceAvailable.&lt;EnterAmount5&gt;b__18_0(IWebDriver d) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\DashboardCompleteBalanceAvailable..cs:line 205&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition, CancellationToken token)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="de52a83b-0119-46a0-823f-94d0ba09b96e" testId="d224cf62-a072-2033-5d80-98a09bc9781a" testName="CompleteSignInFlow" computerName="YAP-L-41-WIN11-" duration="00:01:05.3604919" startTime="2026-03-11T13:23:39.3140792+05:00" endTime="2026-03-11T13:24:44.6745254+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de52a83b-0119-46a0-823f-94d0ba09b96e">
+      <Output>
+        <StdOut>App launched successfully.&#xD;
+Mobile number entered: 3364646412&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 0 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 7 clicked.&#xD;
+Passcode entered: 0987&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button not found, skipping.&#xD;
+Confirmation button not found, skipping.&#xD;
+Driver not disposed, app remains open for manual testing.</StdOut>
+        <ErrorInfo>
+          <Message>OpenQA.Selenium.WebDriverTimeoutException : Timed out after 15 seconds&#xD;
+  ----&gt; OpenQA.Selenium.NoSuchElementException : An element could not be located on the page using the given search parameters.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception</Message>
+          <StackTrace>   at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition, CancellationToken token)&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.DashboardFirstTimeKYCPendingZeroBalance.ClickOnBalanceEye() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\DashboardFirstTimeKYCPendingZeroBalance.cs:line 25&#xD;
+   at POM_Mobile_App_Automate_Stage.CompleteMethod.MainDashboardFirstTimeKYCPendingZeroBalance.CompleteSignInFlow() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\CompleteMethod\MainMethodsALL.cs:line 184&#xD;
+--NoSuchElementException&#xD;
+   at OpenQA.Selenium.WebDriver.UnpackAndThrowOnError(Response errorResponse, String commandToExecute)&#xD;
+   at OpenQA.Selenium.WebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)&#xD;
+   at OpenQA.Selenium.WebDriver.FindElement(String mechanism, String value)&#xD;
+   at OpenQA.Selenium.Appium.AppiumDriver.FindElement(String by, String value)&#xD;
+   at OpenQA.Selenium.Appium.MobileBy.FindElement(ISearchContext context)&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.DashboardFirstTimeKYCPendingZeroBalance.&lt;ClickOnBalanceEye&gt;b__4_0(IWebDriver d) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\DashboardFirstTimeKYCPendingZeroBalance.cs:line 27&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition, CancellationToken token)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CompleteSignInFlow" storage="c:\users\mutahir\source\repos\pom_mobile_app_automate_stage\bin\debug\net6.0\pom_mobile_app_automate_stage.dll" id="d224cf62-a072-2033-5d80-98a09bc9781a">
+      <Execution id="de52a83b-0119-46a0-823f-94d0ba09b96e" />
+      <TestMethod codeBase="C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0\POM_Mobile_App_Automate_Stage.dll" adapterTypeName="executor://nunit3testexecutor/" className="POM_Mobile_App_Automate_Stage.CompleteMethod.MainDashboardFirstTimeKYCPendingZeroBalance" name="CompleteSignInFlow" />
+    </UnitTest>
+    <UnitTest name="CompleteSignInFlow" storage="c:\users\mutahir\source\repos\pom_mobile_app_automate_stage\bin\debug\net6.0\pom_mobile_app_automate_stage.dll" id="565c81ce-f46c-5348-7689-67980c5ea5e1">
+      <Execution id="0e25009a-a639-445d-88c4-a5a00637a7c7" />
+      <TestMethod codeBase="C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0\POM_Mobile_App_Automate_Stage.dll" adapterTypeName="executor://nunit3testexecutor/" className="POM_Mobile_App_Automate_Stage.CompleteMethod.SanityMain" name="CompleteSignInFlow" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="565c81ce-f46c-5348-7689-67980c5ea5e1" executionId="0e25009a-a639-445d-88c4-a5a00637a7c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d224cf62-a072-2033-5d80-98a09bc9781a" executionId="de52a83b-0119-46a0-823f-94d0ba09b96e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.5.0.0: Test execution started&#xD;
+Running all tests in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0\POM_Mobile_App_Automate_Stage.dll&#xD;
+   NUnit3TestExecutor discovered 2 of 2 NUnit test cases using Current Discovery mode, Non-Explicit run&#xD;
+NUnit Adapter 4.5.0.0: Test execution complete&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="YAP-L-41-WIN11-" outcome="Warning" timestamp="2026-03-11T13:24:44.7118143+05:00">
+        <Text>App launched successfully.&#xD;
+Mobile number entered: 3364646412&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 0 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 7 clicked.&#xD;
+Passcode entered: 0987&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button not found, skipping.&#xD;
+Confirmation button not found, skipping.&#xD;
+Driver not disposed, app remains open for manual testing.&#xD;
+</Text>
+      </RunInfo>
+      <RunInfo computerName="YAP-L-41-WIN11-" outcome="Warning" timestamp="2026-03-11T13:26:52.5881830+05:00">
+        <Text>App launched successfully.&#xD;
+[RecordingScript] Starting continuous screen recording...&#xD;
+[RecordingScript] Temp segments folder: C:\Users\Mutahir\AppData\Local\Temp\adb_rec_20260311_132450&#xD;
+[RecordingScript] Recording segment 1 → /sdcard/rec_seg_0000.mp4&#xD;
+Mobile number entered: 3211111111&#xD;
+Remember ID switch toggled twice.&#xD;
+Sign In button clicked.&#xD;
+Digit 0 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 7 clicked.&#xD;
+Passcode entered: 0987&#xD;
+Sign In button clicked after entering passcode.&#xD;
+Error message is: User not found for the specified user type&#xD;
+Expected: 'User not found for the specified user type', Actual: 'User not found for the specified user type', Match: True&#xD;
+Does the error match? True&#xD;
+Back button clicked.&#xD;
+Mobile number entered: 3364646412&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 3 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Passcode entered: 3889&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button clicked.&#xD;
+"Yes, keep me updated" button clicked.&#xD;
+Drawer icon clicked.&#xD;
+Drawer icon clicked.&#xD;
+Logout option clicked.&#xD;
+Logout confirmed.&#xD;
+Mobile number entered: 3364646412&#xD;
+Remember ID switch toggled twice.&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 3 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Passcode entered: 3889&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button clicked.&#xD;
+"Yes, keep me updated" button clicked.&#xD;
+[RecordingScript] Stopping recording...&#xD;
+[RecordingScript] Pulling segment 1...&#xD;
+[RecordingScript] Segment 1 pulled (13475 KB)&#xD;
+[RecordingScript] Rotator loop finished.&#xD;
+[RecordingScript] Video saved to: D:\ScreenshotFailed\ScriptVideo\CompleteSignInFlow_20260311_132651.mp4&#xD;
+[TearDown] Test FAILED – capturing screenshot.&#xD;
+[RecordingFailedScreenshots] Screenshot saved to: D:\ScreenshotFailed\FAILED_CompleteSignInFlow_20260311_132651.png&#xD;
+TearDown executed. Driver left open, app remains running.&#xD;
+</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

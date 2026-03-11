@@ -1,36 +1,47 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<OutputType>Library</OutputType>
+		<StartupObject></StartupObject>
+	</PropertyGroup>
 
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<ItemGroup>
+		<!-- Allure reporting -->
+		<PackageReference Include="Allure.Commons" Version="3.0.0.10" />
+		<PackageReference Include="Allure.NUnit" Version="2.14.1" />
 
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <OutputType>Library</OutputType>
-    <StartupObject></StartupObject>
-  </PropertyGroup>
+		<!-- Appium / Selenium -->
+		<PackageReference Include="Appium.WebDriver" Version="5.0.0" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.21.0" />
+		<PackageReference Include="Selenium.Support" Version="4.21.0" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="118.0.5993.7000" />
 
-  <ItemGroup>
-    <PackageReference Include="Appium.WebDriver" Version="8.0.1" />
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
-    <PackageReference Include="Selenium.Support" Version="4.23.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.40.0" />
-  </ItemGroup>
+		<!-- Testing frameworks -->
+		<PackageReference Include="NUnit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
 
-  <ItemGroup>
-    <Using Include="NUnit.Framework" />
-  </ItemGroup>
+		<!-- Helpers -->
+		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CompleteMethodDashboardFirstTimeKYCPendingZeroBalance\" />
-    <Folder Include="Signup\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Using Include="NUnit.Framework" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="CompleteMethodDashboardFirstTimeKYCPendingZeroBalance\" />
+		<Folder Include="Signup\" />
+	</ItemGroup>
 
 </Project>

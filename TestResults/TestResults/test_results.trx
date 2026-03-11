@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0fc71420-f53b-458e-9ad4-ae843ec9bc9e" name="YAP-L-41-WIN11-$@YAP-L-41-WIN11- 2026-03-10 14:02:56" runUser="NT AUTHORITY\SYSTEM" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-03-10T14:02:56.7462809+05:00" queuing="2026-03-10T14:02:56.7462813+05:00" start="2026-03-10T14:01:50.4536047+05:00" finish="2026-03-10T14:03:08.4582651+05:00" />
+  <TestSettings name="default" id="ea53b968-586b-401c-809a-1b66f88c83e6">
+    <Deployment runDeploymentRoot="YAP-L-41-WIN11-$_YAP-L-41-WIN11-_2026-03-10_14_02_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="62f89094-f904-4000-b5ba-1d67affdebc9" testId="d224cf62-a072-2033-5d80-98a09bc9781a" testName="CompleteSignInFlow" computerName="YAP-L-41-WIN11-" duration="00:01:05.0981320" startTime="2026-03-10T14:01:51.5926244+05:00" endTime="2026-03-10T14:02:56.6907095+05:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="62f89094-f904-4000-b5ba-1d67affdebc9">
+      <Output>
+        <StdOut>App launched successfully.&#xD;
+Mobile number entered: 3364646412&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 0 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 7 clicked.&#xD;
+Passcode entered: 0987&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button not found, skipping.&#xD;
+Confirmation button not found, skipping.&#xD;
+Driver not disposed, app remains open for manual testing.</StdOut>
+        <ErrorInfo>
+          <Message>OpenQA.Selenium.WebDriverTimeoutException : Timed out after 15 seconds&#xD;
+  ----&gt; OpenQA.Selenium.NoSuchElementException : An element could not be located on the page using the given search parameters.; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#nosuchelementexception</Message>
+          <StackTrace>   at OpenQA.Selenium.Support.UI.DefaultWait`1.ThrowTimeoutException(String exceptionMessage, Exception lastException)&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition, CancellationToken token)&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition)&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.DashboardFirstTimeKYCPendingZeroBalance.ClickOnBalanceEye() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\DashboardFirstTimeKYCPendingZeroBalance.cs:line 25&#xD;
+   at POM_Mobile_App_Automate_Stage.CompleteMethod.MainDashboardFirstTimeKYCPendingZeroBalance.CompleteSignInFlow() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\CompleteMethod\MainMethodsALL.cs:line 184&#xD;
+--NoSuchElementException&#xD;
+   at OpenQA.Selenium.WebDriver.UnpackAndThrowOnError(Response errorResponse, String commandToExecute)&#xD;
+   at OpenQA.Selenium.WebDriver.ExecuteAsync(String driverCommandToExecute, Dictionary`2 parameters)&#xD;
+   at OpenQA.Selenium.WebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)&#xD;
+   at OpenQA.Selenium.WebDriver.FindElement(String mechanism, String value)&#xD;
+   at OpenQA.Selenium.Appium.AppiumDriver.FindElement(String by, String value)&#xD;
+   at OpenQA.Selenium.Appium.MobileBy.FindElement(ISearchContext context)&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.DashboardFirstTimeKYCPendingZeroBalance.&lt;ClickOnBalanceEye&gt;b__4_0(IWebDriver d) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\DashboardFirstTimeKYCPendingZeroBalance.cs:line 27&#xD;
+   at OpenQA.Selenium.Support.UI.DefaultWait`1.Until[TResult](Func`2 condition, CancellationToken token)
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="CompleteSignInFlow" storage="c:\users\mutahir\source\repos\pom_mobile_app_automate_stage\bin\debug\net6.0\pom_mobile_app_automate_stage.dll" id="d224cf62-a072-2033-5d80-98a09bc9781a">
+      <Execution id="62f89094-f904-4000-b5ba-1d67affdebc9" />
+      <TestMethod codeBase="C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0\POM_Mobile_App_Automate_Stage.dll" adapterTypeName="executor://nunit3testexecutor/" className="POM_Mobile_App_Automate_Stage.CompleteMethod.MainDashboardFirstTimeKYCPendingZeroBalance" name="CompleteSignInFlow" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d224cf62-a072-2033-5d80-98a09bc9781a" executionId="62f89094-f904-4000-b5ba-1d67affdebc9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.3.1.0: Test execution started&#xD;
+Running all tests in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0\POM_Mobile_App_Automate_Stage.dll&#xD;
+   NUnit3TestExecutor discovered 2 of 2 NUnit test cases using Current Discovery mode, Non-Explicit run&#xD;
+Unhandled exception. System.ComponentModel.Win32Exception (2): An error occurred trying to start process 'adb' with working directory 'C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0'. The system cannot find the file specified.&#xD;
+   at System.Diagnostics.Process.StartWithCreateProcess(ProcessStartInfo startInfo)&#xD;
+   at System.Diagnostics.Process.Start()&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.RecordingScript.StartAdbProcess(String arguments) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\RecordingScript.cs:line 541&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.RecordingScript.RunAdbCommand(String shellArgs) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\RecordingScript.cs:line 523&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.RecordingScript.RotatorLoop() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\RecordingScript.cs:line 382&#xD;
+   at System.Threading.Thread.StartHelper.Callback(Object state)&#xD;
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.Thread.StartCallback()&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="YAP-L-41-WIN11-" outcome="Warning" timestamp="2026-03-10T14:02:56.7126396+05:00">
+        <Text>App launched successfully.&#xD;
+Mobile number entered: 3364646412&#xD;
+Sign In button clicked.&#xD;
+Clearing previous passcode...&#xD;
+No clear button found, will overwrite digits.&#xD;
+Digit 0 clicked.&#xD;
+Digit 9 clicked.&#xD;
+Digit 8 clicked.&#xD;
+Digit 7 clicked.&#xD;
+Passcode entered: 0987&#xD;
+Sign In button clicked.&#xD;
+"No, thanks" button not found, skipping.&#xD;
+Confirmation button not found, skipping.&#xD;
+Driver not disposed, app remains open for manual testing.&#xD;
+</Text>
+      </RunInfo>
+      <RunInfo computerName="YAP-L-41-WIN11-" outcome="Error" timestamp="2026-03-10T14:03:08.4307498+05:00">
+        <Text>The active test run was aborted. Reason: Test host process crashed : Unhandled exception. System.ComponentModel.Win32Exception (2): An error occurred trying to start process 'adb' with working directory 'C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\bin\Debug\net6.0'. The system cannot find the file specified.&#xD;
+   at System.Diagnostics.Process.StartWithCreateProcess(ProcessStartInfo startInfo)&#xD;
+   at System.Diagnostics.Process.Start()&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.RecordingScript.StartAdbProcess(String arguments) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\RecordingScript.cs:line 541&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.RecordingScript.RunAdbCommand(String shellArgs) in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\RecordingScript.cs:line 523&#xD;
+   at POM_Mobile_App_Automate_Stage.All_Pages.RecordingScript.RotatorLoop() in C:\Users\Mutahir\source\repos\POM_Mobile_App_Automate_Stage\All_Pages\RecordingScript.cs:line 382&#xD;
+   at System.Threading.Thread.StartHelper.Callback(Object state)&#xD;
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at System.Threading.Thread.StartCallback()&#xD;
+</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
