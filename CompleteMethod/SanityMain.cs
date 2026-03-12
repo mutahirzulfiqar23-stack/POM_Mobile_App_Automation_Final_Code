@@ -1,42 +1,109 @@
-﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Newtonsoft.Json.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
-//using OpenQA.Selenium.BiDi;
-//using OpenQA.Selenium.BiDi.BrowsingContext;
-//using OpenQA.Selenium.BiDi.Script;
+using OpenQA.Selenium.Support.UI;
 using POM_Mobile_App_Automate_Stage.All_Pages;
 using POM_Mobile_App_Automate_Stage.Utilities;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Threading;
-using System.Threading.Channels;
-using System.Timers;
-using System.Xml.Linq;
-using static NUnit.Framework.Constraints.Tolerance;
 using DriverManager = POM_Mobile_App_Automate_Stage.DriverSetup.WebDriver;
-
-//using static System.Runtime.InteropServices.JavaScript.JSType;
-
-//using static System.Runtime.InteropServices.JavaScript.JSType;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace POM_Mobile_App_Automate_Stage.CompleteMethod
 {
     internal class SanityMain
     {
         private AndroidDriver driver = null!;
-        // private AndroidDriver? driver;
-        private readonly bool keepAppOpen = true; // Keep the app open after tests
+        private WebDriverWait wait = null!;
+        private readonly bool keepAppOpen = true;
 
+        // ─────────────────────────────────────────────────────────────────────
+        //  HELPER: wait until element visible (page-load gate)
+        // ─────────────────────────────────────────────────────────────────────
+        private IWebElement WaitVisible(By locator) =>
+            wait.Until(ExpectedConditions.ElementIsVisible(locator));
+
+        // ─────────────────────────────────────────────────────────────────────
+        //  HELPER: wait until element clickable
+        // ─────────────────────────────────────────────────────────────────────
+        private IWebElement WaitClickable(By locator) =>
+            wait.Until(ExpectedConditions.ElementToBeClickable(locator));
+
+        // ─────────────────────────────────────────────────────────────────────
+        //  HELPER: shared login sequence (mobile + passcode + dismiss popups)
+        // ─────────────────────────────────────────────────────────────────────
+        private void Login(
+            SignIn signInPage,
+            PasscodeVerification passcode,
+            string mobile,
+            string pin,
+            bool rememberMe = true)
+        {
+            // Wait for Sign-In screen to be ready
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etMobileNumber"));
+
+            signInPage.EnterMobileNumber(mobile);
+
+            if (rememberMe)
+                signInPage.DoubleClickRememberSwitch();
+
+            signInPage.ClickSignInButton();
+
+            // Passcode screen
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etPasscode"));
+            passcode.ClearAndEnterPasscode(pin);
+            passcode.ClickSignInButton();
+
+            // Dismiss optional biometric / confirmation popups
+            try
+            {
+                WaitClickable(By.Id("com.yappakistan.app.stage:id/btnNoThanks"));
+                passcode.ClickNoThanksButton();
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Console.WriteLine("No Thanks button not present – skipping.");
+            }
+
+            try
+            {
+                WaitClickable(By.Id("com.yappakistan.app.stage:id/btnConfirmation"));
+                passcode.ClickConfirmationButton();
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Console.WriteLine("Confirmation button not present – skipping.");
+            }
+
+            // Gate: Dashboard must be visible before continuing
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        //  HELPER: shared logout sequence
+        // ─────────────────────────────────────────────────────────────────────
+        private void Logout(LogoutApp logout)
+        {
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
+            logout.ClickDrawerIcon();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvLogout"));
+            logout.PerformLogout();
+
+            // Gate: Sign-In screen must return before next login
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etMobileNumber"));
+        }
+
+        // ═════════════════════════════════════════════════════════════════════
+        //  SETUP
+        // ═════════════════════════════════════════════════════════════════════
         [SetUp]
         public void Setup()
         {
             DriverManager mainMethods = new DriverManager();
 
-            // ScreenRecorderHelper.StartRecording(driver);
             driver = mainMethods.LaunchApp(
                 "0A171JEC215267",
                 "com.yappakistan.app.stage",
@@ -46,869 +113,642 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             if (driver == null)
                 Assert.Fail("Failed to launch app.");
 
+            // Initialise wait AFTER driver is confirmed non-null
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
+
             Console.WriteLine("App launched successfully.");
-            // ── START RECORDING ──────────────────────────────────────
-            // Video will be saved to D:\ScreenshotFailed\CompleteTestVideo
-            // Video will be saved to D:\ScreenshotFailed\CompleteTestVideo
             RecordingScript.StartRecording(driver);
-            // Video will be saved to D:\ScreenshotFailed\CompleteTestVideo
-            /////asd///asd//a/sd
         }
 
+        // ═════════════════════════════════════════════════════════════════════
+        //  TEST
+        // ═════════════════════════════════════════════════════════════════════
         [Test]
         public void CompleteSignInFlow()
         {
-            Thread.Sleep(3000); // Optional, wait for splash
+            // ── Initialise all page objects once ──────────────────────────────
+            SignIn signInPage = new SignIn(driver);
+            PasscodeVerification passcode = new PasscodeVerification(driver);
+            ForgotPassword forgotPassword = new ForgotPassword(driver);
+            FingerPrint fingerprint = new FingerPrint(driver);
+            LogoutApp logout = new LogoutApp(driver);
+            DashboardFirstTimeKYCPendingZeroBalance dashboard = new DashboardFirstTimeKYCPendingZeroBalance(driver);
+            DashboardCompleteBalanceAvailable dashboardFull = new DashboardCompleteBalanceAvailable(driver);
+            Young youngPage = new Young(driver);
+            AddMoneyQRcode qrPage = new AddMoneyQRcode(driver);
+            AddBenefiicary addBeneficiaryPage = new AddBenefiicary(driver);
+            Statements statementsPage = new Statements(driver);
+            TransactionFeed transactionFeedPage = new TransactionFeed(driver);
+            TextCompare textCompare = new TextCompare(driver);
+            ProfileAndAccountSection profile = new ProfileAndAccountSection(driver);
+            AddDevice addDevice = new AddDevice(driver);
+            GeneralUIUXtest uiux = new GeneralUIUXtest(driver);
+            SecuritySection security = new SecuritySection(driver);
+            AboutSection about = new AboutSection(driver);
 
-            // =============================
-            // Initialize Page Objects
-            // Each page object receives the driver instance
-            // =============================
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 1 – Invalid login shows correct error message
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 1: Invalid login ===");
 
-            // Login / Authentication Pages
-            SignIn signInPage = new SignIn(driver);                  // Sign In screen
-            PasscodeVerification passcode = new PasscodeVerification(driver);  // Passcode verification screen
-            ForgotPassword forgotPassword = new ForgotPassword(driver);        // Forgot password flow
-            FingerPrint fingerprint = new FingerPrint(driver);      // Fingerprint / Touch ID screen
-
-            // Logout
-            LogoutApp logout = new LogoutApp(driver);               // Logout functionality
-
-            // =============================
-            // Dashboard Pages
-            // =============================
-
-            DashboardFirstTimeKYCPendingZeroBalance dashboard =
-                new DashboardFirstTimeKYCPendingZeroBalance(driver);  // First-time login dashboard (KYC pending, zero balance)
-
-            DashboardCompleteBalanceAvailable dashboardBalance =
-                new DashboardCompleteBalanceAvailable(driver);        // Dashboard with completed KYC & available balance
-
-            // Duplicate instances (consider removing if not required)
-            var dashboardx = new DashboardCompleteBalanceAvailable(driver);  // Additional dashboard instance
-            var dashboardy = new DashboardCompleteBalanceAvailable(driver);  // Additional dashboard instance
-
-
-            // =============================
-            // Feature Pages
-            // =============================
-
-            Young youngPage = new Young(driver);                    // Young user feature page
-
-            AddMoneyQRcode qrPage = new AddMoneyQRcode(driver);     // Add money via QR code
-
-            AddBenefiicary addBeneficiaryPage = new AddBenefiicary(driver);  // Add beneficiary page
-            AddBenefiicary addBeneficiary = new AddBenefiicary(driver);      // Duplicate instance (can reuse one)
-
-            Statements statementsPage = new Statements(driver);     // Account statements page
-            TransactionFeed transactionFeedPage = new TransactionFeed(driver); // Transaction feed/history page
-
-            // =============================
-            // Utility / Validation Pages
-            // =============================
-
-            var textCompare = new TextCompare(driver);              // Text comparison / validation utility
-
-            ProfileAndAccountSection profile = new ProfileAndAccountSection(driver); // Profile & account settings
-
-            AddDevice addDevice = new AddDevice(driver);            // Add new device flow
-
-            GeneralUIUXtest uiux = new GeneralUIUXtest(driver);     // UI/UX validation tests
-
-            SecuritySection security = new SecuritySection(driver); // Security settings section
-
-            AboutSection about = new AboutSection(driver);          // About section
-
-
-            // ---------------- Example Flow ----------------
-            //////////////////////////////////  //Incorrect credentials show proper error message.Sanity////////////////
-            //=============================
-            //Login Flow - Invalid User Scenario
-            //=============================
-
-            // Enter mobile number in the Sign In screen
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etMobileNumber"));
             signInPage.EnterMobileNumber("3211111111");
-
-            // Toggle the "Remember Me" switch (double click if required by app behavior)
             signInPage.DoubleClickRememberSwitch();
-
-            // Click the Sign In button to proceed
             signInPage.ClickSignInButton();
 
-            // =============================
-            // Passcode Verification
-            // =============================
-            // =============================
-            // Passcode Verification
-            // =============================
-            // Passcode Verification
-            // =============================
-
-            // Enter 4-digit passcode
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etPasscode"));
             passcode.EnterPasscode("0987");
-
-            // Click Sign In button after entering passcode
             signInPage.ClickSignInButtonPassCode();
 
-            // =============================
-            // Error Message Validation
-            // =============================
-            // Error Message Validation
-            // =============================
-            // Capture the displayed error message text
+            // Wait for error banner
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/tvErrorMessage"));
             string errorText = textCompare.GetErrorMessage();
-            Console.WriteLine("Error message is: " + errorText);
+            Console.WriteLine("Error message: " + errorText);
 
-            // Verify that the error message matches expected text
-            bool isMatch = textCompare.IsErrorMessageDisplayed("User not found for the specified user type");
-            Console.WriteLine("Does the error match? " + isMatch);
+            bool isMatch = textCompare.IsErrorMessageDisplayed(
+                "User not found for the specified user type");
+            Assert.IsTrue(isMatch, "Expected error message not displayed for invalid login.");
 
-            // =============================
-            // Navigation
-            // =============================
-
-            // Navigate back to the main screen
             signInPage.ClickBackButton();
 
-            /////////////////////////////////////////////////// User can log in with valid credentials and Logout Sanity// Sign in
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 2 – Valid login then logout
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 2: Valid login + logout ===");
 
-            // =============================
-            // Login Flow - Valid User Scenario
-            // =============================
+            Login(signInPage, passcode, "3364646412", "3889");
+            Logout(logout);
 
-            // Enter registered mobile number on Sign In screen
-            signInPage.EnterMobileNumber("3364646412");
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 3 – Balance eye + Young tab
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 3: Balance eye + Young tab ===");
 
-            // Tap Sign In button to proceed to passcode screen
-            signInPage.ClickSignInButton();
+            Login(signInPage, passcode, "3364646412", "3889");
 
-
-            // =============================
-            // Passcode Verification
-            // =============================
-
-            // Clear any existing digits and enter valid passcode
-            passcode.ClearAndEnterPasscode("3889");
-
-            // Tap Sign In button after entering passcode
-            passcode.ClickSignInButton();
-
-
-            // =============================
-            // Post-Login Popups Handling
-            // =============================
-
-            // If biometric prompt appears, tap "No Thanks"
-            passcode.ClickNoThanksButton();
-
-            // Confirm any additional confirmation dialog (if displayed)
-            passcode.ClickConfirmationButton();
-
-
-            // =============================
-            // Logout Flow
-            // =============================
-
-            // Open navigation drawer/menu
-            logout.ClickDrawerIcon();
-
-            // Perform logout action from menu
-            logout.PerformLogout();
-
-            // Static wait to allow logout process to complete (Not Recommended - replace with explicit wait)
-            Thread.Sleep(5000);
-
-            //////////// NEW Forgot Password and Reset Password of a USER/////////////////////////////
-            //signInPage.EnterMobileNumber("3364646412");
-            //signInPage.ClickSignInButton();
-            //forgotPassword.ClickForgotSecurityPin();
-            //Thread.Sleep(5000);
-            //// Create PIN
-            //forgotPassword.CreateNewPin("3889");
-            //Thread.Sleep(5000);
-            //// Confirm PIN
-            //forgotPassword.ConfirmNewPin("3889");
-            //Thread.Sleep(5000);
-            //// OTP
-            //forgotPassword.EnterOtp("039167");
-            //Thread.Sleep(5000);
-            //// Confirm after OTP
-            //forgotPassword.ClickDoneButton();
-            //Thread.Sleep(5000);
-
-
-            ////// ---------- Sign In Again ----------
-            signInPage.EnterMobileNumber("3364646412");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
-
-            //// Enter passcode
-            passcode.ClearAndEnterPasscode("3889");
-            passcode.ClickSignInButton();
-
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            //// Click Balance Eye
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/ivBalanceEye"));
             dashboard.ClickOnBalanceEye();
 
-            ////////////Balances display correctly (Parent & YAP Young).///////////////////////////////////////////
             youngPage.ClickYoungTab();
             youngPage.ClickMainTab();
 
-            ////Open “Add Money” option – screen loads without crash.////////////////////////////////////////////
-            //   Click Widget Icons
+            // First widget + left icon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickFirstWidgetIcon();
-            //// Click Left Icon
             dashboard.ClickOnLeftIcons();
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 4 – Send Money: successful transaction
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 4: Send money – success ===");
 
-
-            ///////////////Balance updates after a transaction.and also show the current balance after transaction //////////////////////
-            //////////  // Open “Send Money” option – screen loads properly.   16
-            ///////////   //Send money to a valid user – transaction completes successfully.    16
-            ///////////////   //Verify transaction reflects in dashboard.   16
-
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickThirdWidgetIcon();
 
-            //////// Click first statement item
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/rvStatements"));
             dashboard.ClickFirstStatementItem();
 
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/coreView"));
+            dashboardFull.ClickCoreView();
 
-            dashboardy.ClickCoreView();
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etAmount"));
+            dashboardFull.EnterAmount5();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnPay"));
+            dashboardFull.ScrollAndClickPayButton();
 
-            // dashboard.ClickThirdWidgetIcon();
-            dashboardx.EnterAmount5();
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etOtp"));
+            dashboardFull.EnterOtp("039167");
+            dashboardFull.ClickProceedNextButton();
 
-            // Click Pay button
-            dashboardy.ScrollAndClickPayButton();
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnGoToDashboard"));
+            dashboardFull.ClickGoToDashboard();
 
-            dashboardy.EnterOtp("039167");
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
 
-            dashboardy.ClickProceedNextButton();
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 5 – Send Money: insufficient balance / invalid recipient
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 5: Send money – insufficient balance ===");
 
-            dashboardy.ClickGoToDashboard();
-
-            Thread.Sleep(5000);
-
-
-            // ///////////////-------------Send Money---------Error message shown for invalid recipient or insufficient balance.
-
-            // //////// NEW Verify that the user cannot perform Send Money when balance is zero.
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickThirdWidgetIcon();
 
-            //// Click first statement item
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/rvStatements"));
             dashboard.ClickFirstStatementItem();
-
-            //// Click image
             dashboard.ClickOnImage();
-            Thread.Sleep(5000);
-            //// Enter 200 and clear it
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etAmount"));
             dashboard.EnterAndClearAmount200();
 
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
+            dashboard.ClickOnLeftIcons();
 
-            ////  Click the Left Icon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             dashboard.ClickOnLeftIcons();
-            Thread.Sleep(5000);
-            ////  Click the Left Icon
-            dashboard.ClickOnLeftIcons();
-            Thread.Sleep(5000);
-            ////  // Click Cross / Back Button
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivClose"));
             dashboard.ClickCrossBackButton();
-            Thread.Sleep(5000);
-            ////  //Logout from Mobile APP
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
-            Thread.Sleep(5000);
 
-            //// ////// ---------- Sign In Again and Recent transactions list loads without error. --------------
-            signInPage.EnterMobileNumber("3364646412");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
+            Logout(logout);
 
-            //// Enter passcode
-            passcode.ClearAndEnterPasscode("3889");
-            passcode.ClickSignInButton();
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 6 – Recent transactions list
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 6: Recent transactions ===");
 
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            Thread.Sleep(5000);
-            dashboardy.ScrollAndClickSecondTransactionItem();
-            ////  Click the Left Icon
-            Thread.Sleep(5000);
+            Login(signInPage, passcode, "3364646412", "3889");
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/rvTransactions"));
+            dashboardFull.ScrollAndClickSecondTransactionItem();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             dashboard.ClickOnLeftIcons();
-            ////  //Logout from Mobile APP
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
-            Thread.Sleep(5000);
 
+            Logout(logout);
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 7 – Add Money via QR (User 1 – save QR to gallery)
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 7: QR code – User 1 ===");
 
-            //////// ---------- Sign In Again and 
-            //////Add money from linked QR code/bank transfer------------User 1 
-            //////  Balance updates instantly. --------------
+            Login(signInPage, passcode, "3263855579", "0987");
 
-
-            signInPage.EnterMobileNumber("3263855579");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
-
-            //// Enter passcode
-            passcode.ClearAndEnterPasscode("0987");
-            passcode.ClickSignInButton();
-
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            Thread.Sleep(5000);
-            //// Click Widget Icons
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickFirstWidgetIcon();
 
-
-
-            // Click second ivIcon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivSecond"));
             qrPage.ClickSecondIvIcon();
 
-            // Click left/back icon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             qrPage.ClickLeftIcon();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivFirst"));
             qrPage.ClickFirstIvIcon();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnSaveGallery"));
             qrPage.ClickSaveToGallery();
-            Thread.Sleep(5000);
 
-
-
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             qrPage.TapBackButton();
             qrPage.TapNavigationBackButton();
 
-            ////////  //Logout from Mobile APP
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
+            Logout(logout);
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 8 – Add Money via QR scan (User 2 – scan from library)
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 8: QR code scan – User 2 ===");
 
-            Thread.Sleep(5000);
-            /////////// Sign In  -------------- User 2
-            signInPage.EnterMobileNumber("3364646412");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
+            Login(signInPage, passcode, "3364646412", "3889");
 
-            //// Enter passcode
-            passcode.ClearAndEnterPasscode("3889");
-            passcode.ClickSignInButton();
-
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            Thread.Sleep(5000);
-            //// Click Widget Icons
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickFirstWidgetIcon();
 
-
-
-            // Click second ivIcon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivSecond"));
             qrPage.ClickSecondIvIcon();
 
-            // Click left/back icon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             qrPage.ClickLeftIcon();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivFirst"));
             qrPage.ClickFirstIvIcon();
-            Thread.Sleep(5000);
-            qrPage.TapScanButton();
-            Thread.Sleep(5000);
-            qrPage.TapLibraryButton();
-            Thread.Sleep(5000);
-            qrPage.SelectImageFromLibrary();
-            Thread.Sleep(5000);
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnScan"));
+            qrPage.TapScanButton();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnLibrary"));
+            qrPage.TapLibraryButton();
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/rvImages"));
+            qrPage.SelectImageFromLibrary();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnConfirm"));
             qrPage.TapPhotoPickerConfirmButton();
-            Thread.Sleep(5000);
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etAmount"));
             qrPage.EnterAmount200();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnPay"));
             qrPage.ScrollAndTapPayButton();
 
-            dashboardy.EnterOtp("039167");
-            dashboardy.ClickProceedNextButton();
-            dashboardy.ClickGoToDashboard();
-            Thread.Sleep(10000);
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etOtp"));
+            dashboardFull.EnterOtp("039167");
+            dashboardFull.ClickProceedNextButton();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnGoToDashboard"));
+            dashboardFull.ClickGoToDashboard();
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
             qrPage.ClickLeftHeaderIcon();
 
-            ////// Click Balance Eye
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/ivBalanceEye"));
             dashboard.ClickOnBalanceEye();
 
-            ////////  //Logout from Mobile APP
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
-            Thread.Sleep(5000);
+            Logout(logout);
 
-            // Sign In  -------------- ADD Beneficiary
-            //            Verify that the “Add Beneficiary” option is available under the Payments/ Transfers module.Check that the UI elements(fields, buttons, dropdowns) are properly visible and aligned.
-            //Ensure the screen title and instructions(if any) are correct.
-            //Input Validations
-            //Verify required fields: Name, Account Number/ IBAN, Bank Name, Nickname (if applicable).
-            //Check minimum and maximum length validations for beneficiary name and account number.
-            //Enter invalid IBAN / account number → App should show a proper error message.
-            //Enter special characters in name / nickname → Should not be accepted(if restricted).
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 9 – Add Beneficiary (invalid IBAN + valid IBAN + nickname)
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 9: Add Beneficiary ===");
 
-            signInPage.EnterMobileNumber("3364646412");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
+            Login(signInPage, passcode, "3364646412", "3889");
 
-            //// Enter passcode
-            passcode.ClearAndEnterPasscode("3889");
-            passcode.ClickSignInButton();
-
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            Thread.Sleep(5000);
-
-
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickThirdWidgetIcon();
-            Thread.Sleep(5000);
-            addBeneficiaryPage.TapThirdIcon();
-            Thread.Sleep(5000);
-            //////////////////////////////When No Beneficiary Exist then use this
-            /////////////////////////////////////addBeneficiaryPage.TapAddBeneficiaryButton();
 
-            ////////////////////////// Click on "Add Beneficiary + Button"  Use when one or more beneficary Existss
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivThirdIcon"));
+            addBeneficiaryPage.TapThirdIcon();
+
+            // Use ClickAddBeneficiary when one or more beneficiaries already exist
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/fabAddBeneficiary"));
             addBeneficiaryPage.ClickAddBeneficiary();
-            Thread.Sleep(5000);
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/searchBank"));
             addBeneficiaryPage.SearchModelBankOnly();
 
-            Thread.Sleep(5000);
-            // Click on the Bank Logo
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBankLogo"));
             addBeneficiaryPage.ClickBankLogo();
-            Thread.Sleep(5000);
 
-            // Input bank number
+            // Invalid account number – should display error
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etAccountNumber"));
             addBeneficiaryPage.EnterBankNumber("00wq133211jh");
-            // Scroll to and click "Find account"
             addBeneficiaryPage.ScrollAndClickFindAccount();
-            Thread.Sleep(5000);
 
-            // Input Correct bank number
+            // Valid account number
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etAccountNumber"));
             addBeneficiaryPage.EnterBankNumber("111112287788111");
-            // Scroll to and click "Find account"
-            Thread.Sleep(5000);
             addBeneficiaryPage.ScrollAndClickFindAccount();
 
-            //// Enter nickname
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etNickname"));
             addBeneficiaryPage.EnterNickname("powr1@#");
-            // Scroll and click "Confirm"
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnConfirm"));
             addBeneficiaryPage.ScrollAndClickConfirm();
-            dashboardy.EnterOtp("039167");
-            // Click "No, later" button
-            Thread.Sleep(5000);
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etOtp"));
+            dashboardFull.EnterOtp("039167");
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnSendLater"));
             addBeneficiaryPage.ClickSendLater();
-            Thread.Sleep(5000);
-            // Click the left/back icon
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
+            addBeneficiaryPage.ClickLeftIcon();
             addBeneficiaryPage.ClickLeftIcon();
 
-            // Click the left/back icon
-            addBeneficiaryPage.ClickLeftIcon();
-            Thread.Sleep(5000);
+            // Verify beneficiary now visible in list
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/widgetContainer"));
             dashboard.ClickThirdWidgetIcon();
 
-
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivThirdIcon"));
             addBeneficiaryPage.TapThirdIcon();
-            // Click the left/back icon
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             addBeneficiaryPage.ClickLeftIcon();
-            Thread.Sleep(5000);
-            // Click the left/back icon
             addBeneficiaryPage.ClickLeftIcon();
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 10 – Statements (all options)
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 10: Statements ===");
 
-            ////////////////////////////////////////////////////// ////Statement page opens.
-            //Transactions listed correctly with date / time / amount.
-            //Verify statement download works(PDF, Excel, etc.).
-            //Correct balance and transaction history displayed.
-            //Error handling if no transactions are available.
-
-
-
-            ////// Open drawer
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
             dashboard.ClickDrawerIcon();
 
-            ////// Open statements
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvStatements"));
             dashboard.ClickStatements();
 
-
-
-
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewFinancialYear"));
             statementsPage.ClickViewFinancialYear();
 
-            //////// Go back
-            ////    dashboard.ClickLeftNavigationIcon();
-
-            // Click Back Icon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             statementsPage.ClickLeftIcon();
 
-            // Click View Year To Date
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewYearToDate"));
             statementsPage.ClickViewYearToDate();
 
-            // Click Back Icon
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             statementsPage.ClickLeftIcon();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewCustomDate"));
             statementsPage.ClickViewCustomDate();
-            // Click Back Icon
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             statementsPage.ClickLeftIcon();
 
-
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewStatements"));
             statementsPage.ClickViewStatements();
-            //   Click Back Icon
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             statementsPage.ClickLeftIcon();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvPreviousYear"));
             statementsPage.ClickPreviousYear();
-            // Click Back Icon
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             statementsPage.ClickLeftIcon();
-            Thread.Sleep(5000);
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 11 – Transaction Feed + Bottom Navigation
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 11: Transaction feed + bottom nav ===");
 
-            /////////////////////////////////////////Transactions (Feed)
-
-            ////            Sorting / Filter option works.
-            ////Transactions details are displayed properly with correct data.
-            ////Bottom Navigation
-            ////Home → Dashboard loads correctly.
-            ////Store → Page loads without crash.
-            ////YAP it → Page loads and functional.Cards → Active card listing visible.
-            ////More → Profile / Settings page loads.
-
-            // Click Filter
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivFilter"));
             transactionFeedPage.ClickFilterIcon();
-            Thread.Sleep(5000);
-            // Click Amount Slider
-            transactionFeedPage.ClickAmountSlider();
-            Thread.Sleep(5000);
-            transactionFeedPage.ClickApplyFilter();
-            Thread.Sleep(5000);
-            //YourPage page = new YourPage(driver);
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/amountSlider"));
+            transactionFeedPage.ClickAmountSlider();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnApply"));
+            transactionFeedPage.ClickApplyFilter();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/navYoung"));
             transactionFeedPage.ClickYoungNavigation();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/fabYapIt"));
             transactionFeedPage.ClickFabYapIt();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/fabYapIt"));
             transactionFeedPage.ClickFabYapIt();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/navItem"));
             transactionFeedPage.ClickNavBarItem();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/navMore"));
             transactionFeedPage.ClickMore();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/navHome"));
             transactionFeedPage.ClickHome();
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 12 – Profile & Account: personal details + Refer a Friend
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 12: Profile & Account ===");
 
-
-
-            ////////////////////            YAP App(Side Menu)
-            ////////////////////1
-            ////////////////////Profile & Account Section   20
-            ////////////////////Verify user profile name and initials are displayed correctly.  20
-            ////////////////////Check profile dropdown(if any) works properly.	20
-            ////////////////////Ensure "My profile" link opens correct page.	20
-            ////////////////////2
-            ////////////////////Refer a Friend  20
-            ////////////////////Verify the option redirects to the referral flow/ page.  20
-            ////////////////////Referral link/ code generation works.	20
-            ////////////////////Check share functionality(WhatsApp, email, SMS, etc.). 20
-            ////////////////////3
-            ////////////////////Alerts and Notifications    20
-            ////////////////////Verify notifications are displayed correctly.   20
-            ////////////////////Ensure unread/ read states work.	20
-            ////////////////////Push notification redirection tested.	20
-            ////////////////////4
-            ////////////////////Linked Devices(Production) 20
-            ////////////////////Verify Linked Devices option is visible in settings.    20
-            ////////////////////Screen opens without crash or delay.	20
-            ////////////////////Device List
-            ////////////////////All currently linked devices are displayed with correct details(e.g., device name, OS, login   20
-            ////////////////////time).  20
-            ////////////////////The active device is marked correctly (usually the current session).	20
-            /////////////////te or missing entries.    20
-
-
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivProfile"));
             profile.ClickProfileIcon();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewPersonalDetails"));
             profile.ClickViewPersonalDetails();
-            Thread.Sleep(5000);
-            profile.ClickLeftIcon();
-            Thread.Sleep(5000);
-            profile.ClickLeftIcon();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
+            profile.ClickLeftIcon();  // back from personal details
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
+            profile.ClickLeftIcon();  // back to dashboard
+
+            // Open drawer again for Refer a Friend
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
             logout.ClickDrawerIcon();
 
-
-            Thread.Sleep(5000);
-            //// Open Refer a Friend page
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvReferAFriend"));
             profile.ClickReferAFriend();
 
-            Thread.Sleep(5000);
-            // Tap "Share"
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnShare"));
             profile.ClickShareButton();
-            Thread.Sleep(5000);
-            // Tap "Quick Share" in system chooser
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnQuickShare"));
             profile.ClickQuickShareButton();
 
-            Thread.Sleep(5000);
-            // Click Quick Share confirmation button
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnQuickShareConfirm"));
             profile.ClickQuickShareConfirmButton();
-            Thread.Sleep(5000);
-            // Navigate back using left icon
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
-            Thread.Sleep(5000);
-            //////////back using left icon
-            //////////////////////////profile.ClickLeftIconc();
+
+            // ── Alerts & Notifications ────────────────────────────────────────
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
             logout.ClickDrawerIcon();
-            //// Click "Alerts and notifications"
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvAlerts"));
             profile.ClickAlertsOption();
 
-            Thread.Sleep(5000);
-            //////////////Click Navigate Up button
-
+            // "Navigate up" uses content-desc – requires MobileBy.AccessibilityId
+            WaitClickable(MobileBy.AccessibilityId("Navigate up"));
             profile.ClickNavigateUp();
-            Thread.Sleep(5000);
 
+            // ── Settings / Linked Devices (view) ─────────────────────────────
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
             logout.ClickDrawerIcon();
-            Thread.Sleep(5000);
-            profile.ClickSettingsIcon();
-            Thread.Sleep(5000);
-            profile.ClickLinkedDevicesView();
-            Thread.Sleep(5000);
-            profile.ClickBackIcon();
-            Thread.Sleep(5000);
-            profile.ClickBackIcon();
-            Thread.Sleep(5000);
 
-
-
-            ////////            Add Device
-            ////////Verify OTP/ 2FA is required for first - time login from a new device. ////Ignore
-            ////////New device is shown with correct name and timestamp.Remove / Delink Device
-            ////////User can remove a device successfully.
-            ////////Ensure current device cannot be removed(if business logic allows only removing other
-
-
-            Thread.Sleep(5000);
-            logout.ClickDrawerIcon();
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivSettings"));
             profile.ClickSettingsIcon();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvLinkedDevices"));
             profile.ClickLinkedDevicesView();
-            Thread.Sleep(5000);
-            //  addDevice.ClickThirdDelinkButton();
 
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
+            profile.ClickBackIcon();
+            profile.ClickBackIcon();
+
+            // ── Settings / Linked Devices (delink) ───────────────────────────
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
+            logout.ClickDrawerIcon();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivSettings"));
+            profile.ClickSettingsIcon();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvLinkedDevices"));
+            profile.ClickLinkedDevicesView();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnActive"));
             addDevice.ClickActiveButton();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
             profile.ClickBackIcon();
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 13 – Help & Support (FAQs + WhatsApp)
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 13: Help & Support ===");
 
-
-
-
-            //////////            Manage Widgets
-            //////////Verify widget settings open properly.
-            //////////Enable / disable widgets updates UI correctly.
-            //////////Check changes persist after re - login.
-            //////////Live Chat via WhatsApp
-            //////////Verify WhatsApp chat opens with correct support number.
-            //////////Message redirection works.
-            //////////Help and Support
-            //////////Ensure FAQs/ help articles open properly.
-            //////////Contact support form / chat works.
-            //////////Logout
-            //////////Verify logout works smoothly.
-            //////////Session is cleared(user cannot access app without login).
-            //////////Re - login works without issues.
-
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
             logout.ClickDrawerIcon();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvHelpAndSupport"));
             addDevice.ClickHelpAndSupport();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewFaqs"));
             addDevice.ClickViewFaqs();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivCross"));
             addDevice.ClickCrossIcon();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvWhatsappChat"));
             addDevice.ClickWhatsappChat();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivLeftIcon"));
             addDevice.ClickLeftIcon();
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 14 – Profile picture update
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 14: Profile picture ===");
 
-
-            ////////////////////            Navigation back and forth works properly.
-            ////////////////////Verify Personal details page opens correctly and displays accurate user info.
-            ////////////////////Check profile picture update(if allowed) works.
-
-
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivProfile"));
             uiux.ClickProfile();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvViewPersonalDetails"));
             uiux.ClickViewPersonalDetails();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivAdd"));
             uiux.ClickAddIcon();
-            Thread.Sleep(5000);
 
-            uiux.ClickChoosePhoto();  // App's choose photo option
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvChoosePhoto"));
+            uiux.ClickChoosePhoto();
 
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/rvImages"));
             qrPage.SelectImageFromLibrary();
-            Thread.Sleep(5000);
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnConfirm"));
             qrPage.TapPhotoPickerConfirmButton();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnUsePhoto"));
             GeneralUIUXtest generalUI = new GeneralUIUXtest(driver);
-            Thread.Sleep(5000);
-
             generalUI.ClickUsePhoto();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
-            Thread.Sleep(5000);
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
-            Thread.Sleep(5000);
 
-            //            Security Section
-            //Privacy link opens and loads the correct content.
-            //Security Pin:
-            //Change PIN flow works successfully.
-            //App validates incorrect / weak PINs properly.
+            Logout(logout);
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 15 – Security: Change Passcode (user 3229009909)
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 15: Change Passcode ===");
 
-            signInPage.EnterMobileNumber("3229009909");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
+            Login(signInPage, passcode, "3229009909", "3022");
 
-            ////// Enter passcode
-            passcode.ClearAndEnterPasscode("3022");
-            passcode.ClickSignInButton();
-
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            Thread.Sleep(5000);
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivProfile"));
             uiux.ClickProfile();
 
-           // //Thread.Sleep(5000);
-           // // Tap "More" tab
-            security.ClickChangePasscode();     // Click "Change Passcode"
-                                                //// // Test change for Jenkins CI
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvChangePasscode"));
+            security.ClickChangePasscode();
 
-            //// // Test change for Jenkins CI
-
-            //// // Test change for Jenkins CI
-            //// // Test change for Jenkins CI
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvForgotPin"));
             forgotPassword.ClickForgotSecurityPin();
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etPin"));
             forgotPassword.CreateNewPin("3023");
-            Thread.Sleep(5000);
-            //// Confirm PIN
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etConfirmPin"));
             forgotPassword.ConfirmNewPin("3023");
 
-            //// OTP
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etOtp"));
             forgotPassword.EnterOtp("039167");
 
-            //// Confirm after OTP
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnDone"));
             forgotPassword.ClickDoneButton();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
-            Thread.Sleep(5000);
 
+            Logout(logout);
 
-            //            About Section
-            //Terms & Conditions page opens properly.
-            //Social media links redirect correctly:
-            //            Instagram opens the YAP official page.
-            //Twitter opens the YAP official page.
-            //Facebook opens the YAP official page.
-            //LinkedIn opens the YAP official page.
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 16 – About section: T&C + social media links
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 16: About section ===");
 
+            Login(signInPage, passcode, "3364646412", "3889");
 
-            signInPage.EnterMobileNumber("3364646412");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
-
-            ////// Enter passcode
-            passcode.ClearAndEnterPasscode("3889");
-            passcode.ClickSignInButton();
-
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivProfile"));
             uiux.ClickProfile();
 
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/tvTermsAndConditions"));
             about.ClickViewTermsAndConditions();
-            about.ClickCrossButton();             // Close using cross icon
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivCross"));
+            about.ClickCrossButton();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivTwitter"));
             about.ClickFollowTwitterAndReturn();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivInstagram"));
             about.ClickFollowInstagramAndReturn();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivFacebook"));
             about.ClickLikeUsAndReturn();
-            Thread.Sleep(5000);
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
-            logout.ClickDrawerIcon();
-            logout.PerformLogout();
 
-            //////            Enable / disable works smoothly.
-            //////Re - login with biometric is successful.
-            //////App correctly falls back to PIN if biometric disabled.
+            Logout(logout);
 
-            /////
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 17 – Biometric / Touch ID + Notifications switch
+            // ══════════════════════════════════════════════════════════════════
+            Console.WriteLine("=== FLOW 17: Biometric + Notifications ===");
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etMobileNumber"));
             signInPage.EnterMobileNumber("3364646412");
             signInPage.DoubleClickRememberSwitch();
             signInPage.ClickSignInButton();
 
-            ////// Enter passcode
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/etPasscode"));
             passcode.ClearAndEnterPasscode("3889");
-            Thread.Sleep(5000);
             passcode.ClickSignInButton();
-            Thread.Sleep(5000);
 
+            // Touch ID prompt appears BEFORE the NoThanks/Confirmation popups
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/btnUseTouchID"));
             fingerprint.ClickUseTouchID();
-            Thread.Sleep(5000);
-            //// Optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
-            Thread.Sleep(5000);
+
+            // Dismiss remaining popups
+            try
+            {
+                WaitClickable(By.Id("com.yappakistan.app.stage:id/btnNoThanks"));
+                passcode.ClickNoThanksButton();
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Console.WriteLine("No Thanks button not present – skipping.");
+            }
+
+            try
+            {
+                WaitClickable(By.Id("com.yappakistan.app.stage:id/btnConfirmation"));
+                passcode.ClickConfirmationButton();
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Console.WriteLine("Confirmation button not present – skipping.");
+            }
+
+            WaitVisible(By.Id("com.yappakistan.app.stage:id/ivDrawer"));
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivProfile"));
             uiux.ClickProfile();
-           
-            // Simple Click
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/switchNotifications"));
             fingerprint.ClickNotificationsSwitch();
+
+            WaitClickable(By.Id("com.yappakistan.app.stage:id/ivBack"));
             profile.ClickBackIcon();
-             logout.ClickDrawerIcon();
-            logout.PerformLogout();
+
+            Logout(logout);
         }
 
-
+        // ═════════════════════════════════════════════════════════════════════
+        //  TEARDOWN
+        // ═════════════════════════════════════════════════════════════════════
         [TearDown]
         public void TearDown()
         {
-            // 1. Grab the test name and result status from NUnit
             string testName = TestContext.CurrentContext.Test.Name;
             var testStatus = TestContext.CurrentContext.Result.Outcome.Status;
 
-            // 2. STOP RECORDING and save the video
-            //    Video goes to: D:\ScreenshotFailed\CompleteTestVideo\<testName>_<timestamp>.mp4
             RecordingScript.StopRecordingAndSave(testName);
 
-            // 3. If the test FAILED, capture a screenshot of the current screen
-            //    Screenshot goes to: D:\ScreenshotFailed\FAILED_<testName>_<timestamp>.png
             if (testStatus == TestStatus.Failed)
             {
                 Console.WriteLine("[TearDown] Test FAILED – capturing screenshot.");
                 RecordingFailedScreenshots.CaptureScreenshot(driver, testName);
             }
 
-            // 4. Optional: keep the app open (existing behaviour)
             if (!keepAppOpen)
             {
                 if (driver != null)
@@ -927,8 +767,5 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
                 Console.WriteLine("TearDown executed. Driver left open, app remains running.");
             }
         }
-
     }
 }
-
-
