@@ -201,6 +201,8 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             // ══════════════════════════════════════════════════════════════════
             // FLOW 7 — Add Money via QR: User 1 saves QR to gallery
             // ══════════════════════════════════════════════════════════════════
+            // FLOW 7 — Add Money via QR: User 1 saves QR to gallery
+            // ══════════════════════════════════════════════════════════════════
             Console.WriteLine("=== FLOW 7: QR code – User 1 (save to gallery) ===");
 
             Login("3263855579", "0987");
