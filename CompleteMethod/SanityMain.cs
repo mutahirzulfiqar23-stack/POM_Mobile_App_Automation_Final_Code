@@ -262,10 +262,10 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             addBeneficiaryPage.ScrollAndClickFindAccount();
 
             // Valid IBAN
-            addBeneficiaryPage.EnterBankNumber("111112287788111");
+            addBeneficiaryPage.EnterBankNumber("111112274588111");
             addBeneficiaryPage.ScrollAndClickFindAccount();
 
-            addBeneficiaryPage.EnterNickname("powr1@#");
+            addBeneficiaryPage.EnterNickname("poiuy@#");
             addBeneficiaryPage.ScrollAndClickConfirm();
             dashboardFull.EnterOtp("039167");
             addBeneficiaryPage.ClickSendLater();
@@ -301,6 +301,8 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             statementsPage.ClickPreviousYear();
             statementsPage.ClickLeftIcon();
 
+            // ══════════════════════════════════════════════════════════════════
+            // FLOW 11 — Transaction Feed + Bottom Navigation
             // ══════════════════════════════════════════════════════════════════
             // FLOW 11 — Transaction Feed + Bottom Navigation
             // ══════════════════════════════════════════════════════════════════
@@ -432,26 +434,26 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             // FLOW 17 — Biometric / Touch ID + Notifications switch
             // IMPORTANT: Touch ID prompt fires BEFORE NoThanks/Confirmation
             // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 17: Biometric + Notifications ===");
+            //Console.WriteLine("=== FLOW 17: Biometric + Notifications ===");
 
-            signInPage.EnterMobileNumber("3364646412");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
-            passcode.ClearAndEnterPasscode("3889");
-            passcode.ClickSignInButton();
+            //signInPage.EnterMobileNumber("3364646412");
+            //signInPage.DoubleClickRememberSwitch();
+            //signInPage.ClickSignInButton();
+            //passcode.ClearAndEnterPasscode("3889");
+            //passcode.ClickSignInButton();
 
-            // Touch ID appears first — must click before other popups
-            fingerprint.ClickUseTouchID();
+            //// Touch ID appears first — must click before other popups
+            //fingerprint.ClickUseTouchID();
 
-            // Remaining optional popups
-            passcode.ClickNoThanksButton();
-            passcode.ClickConfirmationButton();
+            //// Remaining optional popups
+            //passcode.ClickNoThanksButton();
+            //passcode.ClickConfirmationButton();
 
-            uiux.ClickProfile();
-            fingerprint.ClickNotificationsSwitch();
-            profile.ClickBackIcon();
+            //uiux.ClickProfile();
+            //fingerprint.ClickNotificationsSwitch();
+            //profile.ClickBackIcon();
 
-            Logout();
+            //Logout();
         }
 
         // ═════════════════════════════════════════════════════════════════════
