@@ -4,33 +4,42 @@ pipeline {
         allure 'Allure'
     }
     environment {
-    ALLURE_RESULTS = "allure-results"
-    ANDROID_HOME   = "C:\\Android\\sdk"
-    PATH           = "${env.PATH};C:\\Android\\sdk\\platform-tools"
-}
+        ALLURE_RESULTS = "allure-results"
+        ANDROID_HOME   = "C:\\Android\\sdk"
+        PATH           = "${env.PATH};C:\\Android\\sdk\\platform-tools"
+    }
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/mutahirzulfiqar23-stack/POM_Mobile_App_Automation_Final_Code.git'
             }
         }
-        stage('Clean Workspace') {
-            steps {
-                bat 'git reset --hard'
-                bat 'git clean -fdx'
-                bat 'dotnet nuget locals all --clear'
-            }
-        }
+
         stage('Restore NuGet Packages') {
             steps {
                 bat 'dotnet restore'
             }
         }
+
         stage('Build Project') {
             steps {
                 bat 'dotnet build --no-restore'
             }
         }
+
+        stage('Verify ADB') {
+            steps {
+                bat 'adb version'
+            }
+        }
+
         stage('Run Automation Tests') {
             steps {
                 bat 'dotnet test --no-build --logger trx --results-directory allure-results --filter "FullyQualifiedName~SanityMain"'
