@@ -216,6 +216,7 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             Logout();
 
             // ══════════════════════════════════════════════════════════════════
+            // ══════════════════════════════════════════════════════════════════
             // FLOW 8 — Add Money via QR: User 2 scans from library + pays
             // ══════════════════════════════════════════════════════════════════
             Console.WriteLine("=== FLOW 8: QR code – User 2 (scan + pay) ===");
