@@ -235,6 +235,7 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             qrPage.ScrollAndTapPayButton();
             dashboardFull.EnterOtp("039167");
             dashboardFull.ClickProceedNextButton();
+            Thread.Sleep(5000);
             dashboardFull.ClickGoToDashboard();
             qrPage.ClickLeftHeaderIcon();
             dashboard.ClickOnBalanceEye();
