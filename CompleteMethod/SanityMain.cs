@@ -115,111 +115,111 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
         [Test]
         public void CompleteSignInFlow()
         {
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 1 — Invalid login shows correct error message
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 1: Invalid login error message ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 1 — Invalid login shows correct error message
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 1: Invalid login error message ===");
 
-            signInPage.EnterMobileNumber("3211111111");
-            signInPage.DoubleClickRememberSwitch();
-            signInPage.ClickSignInButton();
-            passcode.EnterPasscode("0987");
-            signInPage.ClickSignInButtonPassCode();
+            //signInPage.EnterMobileNumber("3211111111");
+            //signInPage.DoubleClickRememberSwitch();
+            //signInPage.ClickSignInButton();
+            //passcode.EnterPasscode("0987");
+            //signInPage.ClickSignInButtonPassCode();
 
-            string errorText = textCompare.GetErrorMessage();
-            Console.WriteLine("Error message received: " + errorText);
+            //string errorText = textCompare.GetErrorMessage();
+            //Console.WriteLine("Error message received: " + errorText);
 
-            Assert.IsTrue(
-                textCompare.IsErrorMessageDisplayed("User not found for the specified user type"),
-                "Expected error message not displayed for invalid login."
-            );
+            //Assert.IsTrue(
+            //    textCompare.IsErrorMessageDisplayed("User not found for the specified user type"),
+            //    "Expected error message not displayed for invalid login."
+            //);
 
-            signInPage.ClickBackButton();
+            //signInPage.ClickBackButton();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 2 — Valid login then logout
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 2: Valid login + logout ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 2 — Valid login then logout
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 2: Valid login + logout ===");
 
-            Login("3364646412", "3889");
-            Logout();
+            //Login("3364646412", "3889");
+            //Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 3 — Balance eye + Young tab + widget navigation
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 3: Balance eye + Young tab ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 3 — Balance eye + Young tab + widget navigation
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 3: Balance eye + Young tab ===");
 
-            Login("3364646412", "3889");
+            //Login("3364646412", "3889");
 
-            dashboard.ClickOnBalanceEye();
-            youngPage.ClickYoungTab();
-            youngPage.ClickMainTab();
-            dashboard.ClickFirstWidgetIcon();
-            dashboard.ClickOnLeftIcons();
+            //dashboard.ClickOnBalanceEye();
+            //youngPage.ClickYoungTab();
+            //youngPage.ClickMainTab();
+            //dashboard.ClickFirstWidgetIcon();
+            //dashboard.ClickOnLeftIcons();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 4 — Send Money: successful transaction
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 4: Send money – success ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 4 — Send Money: successful transaction
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 4: Send money – success ===");
 
-            dashboard.ClickThirdWidgetIcon();
-            dashboard.ClickFirstStatementItem();
-            dashboardFull.ClickCoreView();
-            dashboardFull.EnterAmount5();
-            dashboardFull.ScrollAndClickPayButton();
-            dashboardFull.EnterOtp("039167");
-            dashboardFull.ClickProceedNextButton();
-            dashboardFull.ClickGoToDashboard();
+            //dashboard.ClickThirdWidgetIcon();
+            //dashboard.ClickFirstStatementItem();
+            //dashboardFull.ClickCoreView();
+            //dashboardFull.EnterAmount5();
+            //dashboardFull.ScrollAndClickPayButton();
+            //dashboardFull.EnterOtp("039167");
+            //dashboardFull.ClickProceedNextButton();
+            //dashboardFull.ClickGoToDashboard();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 5 — Send Money: error for invalid recipient / zero balance
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 5: Send money – insufficient balance ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 5 — Send Money: error for invalid recipient / zero balance
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 5: Send money – insufficient balance ===");
 
-            dashboard.ClickThirdWidgetIcon();
-            dashboard.ClickFirstStatementItem();
-            dashboard.ClickOnImage();
-            dashboard.EnterAndClearAmount200();
-            dashboard.ClickOnLeftIcons();
-            dashboard.ClickOnLeftIcons();
-            dashboard.ClickCrossBackButton();
+            //dashboard.ClickThirdWidgetIcon();
+            //dashboard.ClickFirstStatementItem();
+            //dashboard.ClickOnImage();
+            //dashboard.EnterAndClearAmount200();
+            //dashboard.ClickOnLeftIcons();
+            //dashboard.ClickOnLeftIcons();
+            //dashboard.ClickCrossBackButton();
 
-            Logout();
+            //Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 6 — Recent transactions list loads without error
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 6: Recent transactions ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 6 — Recent transactions list loads without error
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 6: Recent transactions ===");
 
-            Login("3364646412", "3889");
+            //Login("3364646412", "3889");
 
-            dashboardFull.ScrollAndClickSecondTransactionItem();
-            dashboard.ClickOnLeftIcons();
+            //dashboardFull.ScrollAndClickSecondTransactionItem();
+            //dashboard.ClickOnLeftIcons();
 
-            Logout();
+            //Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 7 — Add Money via QR: User 1 saves QR to gallery
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 7: QR code – User 1 (save to gallery) ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 7 — Add Money via QR: User 1 saves QR to gallery
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 7: QR code – User 1 (save to gallery) ===");
 
-            Login("3263855579", "0987");
+            //Login("3263855579", "0987");
 
-            dashboard.ClickFirstWidgetIcon();
-            qrPage.ClickSecondIvIcon();
-            qrPage.ClickLeftIcon();
-            qrPage.ClickFirstIvIcon();
-            qrPage.ClickSaveToGallery();
-            qrPage.TapBackButton();
-            qrPage.TapNavigationBackButton();
+            //dashboard.ClickFirstWidgetIcon();
+            //qrPage.ClickSecondIvIcon();
+            //qrPage.ClickLeftIcon();
+            //qrPage.ClickFirstIvIcon();
+            //qrPage.ClickSaveToGallery();
+            //qrPage.TapBackButton();
+            //qrPage.TapNavigationBackButton();
 
-            Logout();
+            ////Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 8 — Add Money via QR: User 2 scans from library + pays
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 8: QR code – User 2 (scan + pay) ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 8 — Add Money via QR: User 2 scans from library + pays
+            //// ══════════════════════════════════════════════════════════════════
+        //    Console.WriteLine("=== FLOW 8: QR code – User 2 (scan + pay) ===");
 
             Login("3364646412", "3889");
 
@@ -235,206 +235,210 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             qrPage.ScrollAndTapPayButton();
             dashboardFull.EnterOtp("039167");
             dashboardFull.ClickProceedNextButton();
-            Thread.Sleep(5000);
+            Notificationswipe notificationSwipe = new Notificationswipe(driver);
+            notificationSwipe.SwipeNotificationRight();
             dashboardFull.ClickGoToDashboard();
+            notificationSwipe.ClickThirdIcon();
+
+            notificationSwipe.ScrollDown();
             qrPage.ClickLeftHeaderIcon();
             dashboard.ClickOnBalanceEye();
 
             Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 9 — Add Beneficiary (invalid IBAN → error, valid IBAN → saved)
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 9: Add Beneficiary ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 9 — Add Beneficiary (invalid IBAN → error, valid IBAN → saved)
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 9: Add Beneficiary ===");
 
-            Login("3364646412", "3889");
+            //Login("3364646412", "3889");
 
-            dashboard.ClickThirdWidgetIcon();
-            addBeneficiaryPage.TapThirdIcon();
+            //dashboard.ClickThirdWidgetIcon();
+            //addBeneficiaryPage.TapThirdIcon();
 
-            // NOTE: Use TapAddBeneficiaryButton() if NO beneficiaries exist yet
-            //       Use ClickAddBeneficiary()    if one or more already exist
-            addBeneficiaryPage.ClickAddBeneficiary();
+            //// NOTE: Use TapAddBeneficiaryButton() if NO beneficiaries exist yet
+            ////       Use ClickAddBeneficiary()    if one or more already exist
+            //addBeneficiaryPage.ClickAddBeneficiary();
 
-            addBeneficiaryPage.SearchModelBankOnly();
-            addBeneficiaryPage.ClickBankLogo();
+            //addBeneficiaryPage.SearchModelBankOnly();
+            //addBeneficiaryPage.ClickBankLogo();
 
-            // Invalid IBAN — app must show error
-            addBeneficiaryPage.EnterBankNumber("00wq133211jh");
-            addBeneficiaryPage.ScrollAndClickFindAccount();
+            //// Invalid IBAN — app must show error
+            //addBeneficiaryPage.EnterBankNumber("00wq133211jh");
+            //addBeneficiaryPage.ScrollAndClickFindAccount();
 
-            // Valid IBAN
-            addBeneficiaryPage.EnterBankNumber("111112274588111");
-            addBeneficiaryPage.ScrollAndClickFindAccount();
+            //// Valid IBAN
+            //addBeneficiaryPage.EnterBankNumber("111112274588111");
+            //addBeneficiaryPage.ScrollAndClickFindAccount();
 
-            addBeneficiaryPage.EnterNickname("poiuy@#");
-            addBeneficiaryPage.ScrollAndClickConfirm();
-            dashboardFull.EnterOtp("039167");
-            addBeneficiaryPage.ClickSendLater();
-            addBeneficiaryPage.ClickLeftIcon();
-            addBeneficiaryPage.ClickLeftIcon();
+            //addBeneficiaryPage.EnterNickname("poiuy@#");
+            //addBeneficiaryPage.ScrollAndClickConfirm();
+            //dashboardFull.EnterOtp("039167");
+            //addBeneficiaryPage.ClickSendLater();
+            //addBeneficiaryPage.ClickLeftIcon();
+            //addBeneficiaryPage.ClickLeftIcon();
 
-            // Verify beneficiary appears in the list
-            dashboard.ClickThirdWidgetIcon();
-            addBeneficiaryPage.TapThirdIcon();
-            addBeneficiaryPage.ClickLeftIcon();
-            addBeneficiaryPage.ClickLeftIcon();
+            //// Verify beneficiary appears in the list
+            //dashboard.ClickThirdWidgetIcon();
+            //addBeneficiaryPage.TapThirdIcon();
+            //addBeneficiaryPage.ClickLeftIcon();
+            //addBeneficiaryPage.ClickLeftIcon();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 10 — Statements (all statement types)
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 10: Statements ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 10 — Statements (all statement types)
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 10: Statements ===");
 
-            dashboard.ClickDrawerIcon();
-            dashboard.ClickStatements();
+            //dashboard.ClickDrawerIcon();
+            //dashboard.ClickStatements();
 
-            statementsPage.ClickViewFinancialYear();
-            statementsPage.ClickLeftIcon();
+            //statementsPage.ClickViewFinancialYear();
+            //statementsPage.ClickLeftIcon();
 
-            statementsPage.ClickViewYearToDate();
-            statementsPage.ClickLeftIcon();
+            //statementsPage.ClickViewYearToDate();
+            //statementsPage.ClickLeftIcon();
 
-            statementsPage.ClickViewCustomDate();
-            statementsPage.ClickLeftIcon();
+            //statementsPage.ClickViewCustomDate();
+            //statementsPage.ClickLeftIcon();
 
-            statementsPage.ClickViewStatements();
-            statementsPage.ClickLeftIcon();
+            //statementsPage.ClickViewStatements();
+            //statementsPage.ClickLeftIcon();
 
-            statementsPage.ClickPreviousYear();
-            statementsPage.ClickLeftIcon();
+            //statementsPage.ClickPreviousYear();
+            //statementsPage.ClickLeftIcon();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 11 — Transaction Feed + Bottom Navigation
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 11 — Transaction Feed + Bottom Navigation
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 11: Transaction feed + bottom nav ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 11 — Transaction Feed + Bottom Navigation
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 11 — Transaction Feed + Bottom Navigation
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 11: Transaction feed + bottom nav ===");
 
-            transactionFeedPage.ClickFilterIcon();
-            transactionFeedPage.ClickAmountSlider();
-            transactionFeedPage.ClickApplyFilter();
-            transactionFeedPage.ClickYoungNavigation();
-            transactionFeedPage.ClickFabYapIt();
-            transactionFeedPage.ClickFabYapIt();
-            transactionFeedPage.ClickNavBarItem();
-            transactionFeedPage.ClickMore();
-            transactionFeedPage.ClickHome();
+            //transactionFeedPage.ClickFilterIcon();
+            //transactionFeedPage.ClickAmountSlider();
+            //transactionFeedPage.ClickApplyFilter();
+            //transactionFeedPage.ClickYoungNavigation();
+            //transactionFeedPage.ClickFabYapIt();
+            //transactionFeedPage.ClickFabYapIt();
+            //transactionFeedPage.ClickNavBarItem();
+            //transactionFeedPage.ClickMore();
+            //transactionFeedPage.ClickHome();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 12 — Profile: personal details
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 12: Profile – personal details ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 12 — Profile: personal details
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 12: Profile – personal details ===");
 
-            profile.ClickProfileIcon();
-            profile.ClickViewPersonalDetails();
-            profile.ClickLeftIcon();  // back from personal details
-            profile.ClickLeftIcon();  // back to dashboard
+            //profile.ClickProfileIcon();
+            //profile.ClickViewPersonalDetails();
+            //profile.ClickLeftIcon();  // back from personal details
+            //profile.ClickLeftIcon();  // back to dashboard
 
-            // ── Refer a Friend ────────────────────────────────────────────────
-            Console.WriteLine("=== FLOW 12b: Refer a Friend ===");
+            //// ── Refer a Friend ────────────────────────────────────────────────
+            //Console.WriteLine("=== FLOW 12b: Refer a Friend ===");
 
-            logout.ClickDrawerIcon();
-            profile.ClickReferAFriend();
-            profile.ClickShareButton();
-            profile.ClickQuickShareButton();
-            profile.ClickQuickShareConfirmButton();
-            profile.ClickBackIcon();
+            //logout.ClickDrawerIcon();
+            //profile.ClickReferAFriend();
+            //profile.ClickShareButton();
+            //profile.ClickQuickShareButton();
+            //profile.ClickQuickShareConfirmButton();
+            //profile.ClickBackIcon();
 
-            // ── Alerts & Notifications ────────────────────────────────────────
-            Console.WriteLine("=== FLOW 12c: Alerts & Notifications ===");
+            //// ── Alerts & Notifications ────────────────────────────────────────
+            //Console.WriteLine("=== FLOW 12c: Alerts & Notifications ===");
 
-            logout.ClickDrawerIcon();
-            profile.ClickAlertsOption();
-            profile.ClickNavigateUp();
+            //logout.ClickDrawerIcon();
+            //profile.ClickAlertsOption();
+            //profile.ClickNavigateUp();
 
-            // ── Linked Devices: view ──────────────────────────────────────────
-            Console.WriteLine("=== FLOW 12d: Linked Devices – view ===");
+            //// ── Linked Devices: view ──────────────────────────────────────────
+            //Console.WriteLine("=== FLOW 12d: Linked Devices – view ===");
 
-            logout.ClickDrawerIcon();
-            profile.ClickSettingsIcon();
-            profile.ClickLinkedDevicesView();
-            profile.ClickBackIcon();
-            profile.ClickBackIcon();
+            //logout.ClickDrawerIcon();
+            //profile.ClickSettingsIcon();
+            //profile.ClickLinkedDevicesView();
+            //profile.ClickBackIcon();
+            //profile.ClickBackIcon();
 
-            // ── Linked Devices: delink ────────────────────────────────────────
-            Console.WriteLine("=== FLOW 12e: Linked Devices – delink ===");
+            //// ── Linked Devices: delink ────────────────────────────────────────
+            //Console.WriteLine("=== FLOW 12e: Linked Devices – delink ===");
 
-            logout.ClickDrawerIcon();
-            profile.ClickSettingsIcon();
-            profile.ClickLinkedDevicesView();
-            addDevice.ClickActiveButton();
-            profile.ClickBackIcon();
-            profile.ClickBackIcon();
+            //logout.ClickDrawerIcon();
+            //profile.ClickSettingsIcon();
+            //profile.ClickLinkedDevicesView();
+            //addDevice.ClickActiveButton();
+            //profile.ClickBackIcon();
+            //profile.ClickBackIcon();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 13 — Help & Support (FAQs + WhatsApp chat)
-            // ══════════════════════════════════════════════════════════════════
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 13 — Help & Support (FAQs + WhatsApp chat)
+            //// ══════════════════════════════════════════════════════════════════
 
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 13: Help & Support ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 13: Help & Support ===");
 
-            logout.ClickDrawerIcon();
-            addDevice.ClickHelpAndSupport();
-            addDevice.ClickViewFaqs();
-            addDevice.ClickCrossIcon();
-            addDevice.ClickWhatsappChat();
-            addDevice.ClickLeftIcon();
+            //logout.ClickDrawerIcon();
+            //addDevice.ClickHelpAndSupport();
+            //addDevice.ClickViewFaqs();
+            //addDevice.ClickCrossIcon();
+            //addDevice.ClickWhatsappChat();
+            //addDevice.ClickLeftIcon();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 14 — Profile picture update
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 14: Profile picture update ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 14 — Profile picture update
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 14: Profile picture update ===");
 
-            uiux.ClickProfile();
-            uiux.ClickViewPersonalDetails();
-            profile.ClickBackIcon();
-            uiux.ClickAddIcon();
-            uiux.ClickChoosePhoto();
-            qrPage.SelectImageFromLibrary();
-            qrPage.TapPhotoPickerConfirmButton();
-            uiux.ClickUsePhoto();
-            profile.ClickBackIcon();
+            //uiux.ClickProfile();
+            //uiux.ClickViewPersonalDetails();
+            //profile.ClickBackIcon();
+            //uiux.ClickAddIcon();
+            //uiux.ClickChoosePhoto();
+            //qrPage.SelectImageFromLibrary();
+            //qrPage.TapPhotoPickerConfirmButton();
+            //uiux.ClickUsePhoto();
+            //profile.ClickBackIcon();
 
-            Logout();
+            //Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 15 — Security: Change Passcode (user 3229009909)
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 15: Change Passcode ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 15 — Security: Change Passcode (user 3229009909)
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 15: Change Passcode ===");
 
-            Login("3229009909", "3022");
+            //Login("3229009909", "3022");
 
-            uiux.ClickProfile();
-            security.ClickChangePasscode();
-            forgotPassword.ClickForgotSecurityPin();
-            forgotPassword.CreateNewPin("3023");
-            forgotPassword.ConfirmNewPin("3023");
-            forgotPassword.EnterOtp("039167");
-            forgotPassword.ClickDoneButton();
-            profile.ClickBackIcon();
+            //uiux.ClickProfile();
+            //security.ClickChangePasscode();
+            //forgotPassword.ClickForgotSecurityPin();
+            //forgotPassword.CreateNewPin("3023");
+            //forgotPassword.ConfirmNewPin("3023");
+            //forgotPassword.EnterOtp("039167");
+            //forgotPassword.ClickDoneButton();
+            //profile.ClickBackIcon();
 
-            Logout();
+            //Logout();
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 16 — About section: T&C + all social media links
-            // ══════════════════════════════════════════════════════════════════
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 16 — About section: T&C + all social media links
+            //// ══════════════════════════════════════════════════════════════════
 
-            // ══════════════════════════════════════════════════════════════════
-            // FLOW 16 — About section: T&C + all social media links
-            // ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 16: About section ===");
+            //// ══════════════════════════════════════════════════════════════════
+            //// FLOW 16 — About section: T&C + all social media links
+            //// ══════════════════════════════════════════════════════════════════
+            //Console.WriteLine("=== FLOW 16: About section ===");
 
-            Login("3364646412", "3889");
+            //Login("3364646412", "3889");
 
-            uiux.ClickProfile();
-            about.ClickViewTermsAndConditions();
-            about.ClickCrossButton();
-            about.ClickFollowTwitterAndReturn();
-            about.ClickFollowInstagramAndReturn();
-            about.ClickLikeUsAndReturn();
-            profile.ClickBackIcon();
+            //uiux.ClickProfile();
+            //about.ClickViewTermsAndConditions();
+            //about.ClickCrossButton();
+            //about.ClickFollowTwitterAndReturn();
+            //about.ClickFollowInstagramAndReturn();
+            //about.ClickLikeUsAndReturn();
+            //profile.ClickBackIcon();
 
-            Logout();
+            //Logout();
 
             // ══════════════════════════════════════════════════════════════════
             // FLOW 17 — Biometric / Touch ID + Notifications switch
