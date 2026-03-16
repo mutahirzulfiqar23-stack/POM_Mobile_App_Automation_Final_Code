@@ -72,9 +72,7 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
             try
             {
                 int startX = driver.Manage().Window.Size.Width / 2;
-
                 int startY = (int)(driver.Manage().Window.Size.Height * 0.8);
-
                 int endY = (int)(driver.Manage().Window.Size.Height * 0.3);
 
                 new TouchAction(driver)
@@ -89,6 +87,41 @@ namespace POM_Mobile_App_Automate_Stage.All_Pages
             catch (Exception e)
             {
                 Console.WriteLine("Scroll failed: " + e.Message);
+            }
+        }
+
+        // NEW METHOD: Click clIcon and scroll
+        public void ClickSecondClIconAndScroll()
+        {
+            try
+            {
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+                IWebElement icon = wait.Until(d =>
+                    d.FindElement(By.XPath("(//android.view.ViewGroup[@resource-id='com.yappakistan.app.stage:id/clIcon'])[2]"))
+                );
+
+                icon.Click();
+
+                Console.WriteLine("Second clIcon clicked successfully.");
+
+                // Scroll after click
+                int startX = driver.Manage().Window.Size.Width / 2;
+                int startY = (int)(driver.Manage().Window.Size.Height * 0.8);
+                int endY = (int)(driver.Manage().Window.Size.Height * 0.3);
+
+                new TouchAction(driver)
+                    .Press(startX, startY)
+                    .Wait(500)
+                    .MoveTo(startX, endY)
+                    .Release()
+                    .Perform();
+
+                Console.WriteLine("Scroll after click performed successfully.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to click clIcon or scroll: " + e.Message);
             }
         }
     }

@@ -36,7 +36,7 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
         private GeneralUIUXtest uiux = null!;
         private SecuritySection security = null!;
         private AboutSection about = null!;
-
+        private Notificationswipe notification = null!;
         // ─────────────────────────────────────────────────────────────────────
         // HELPER: Login
         // All waits live inside the page object methods — nothing here
@@ -104,10 +104,15 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             uiux = new GeneralUIUXtest(driver);
             security = new SecuritySection(driver);
             about = new AboutSection(driver);
+             notification = new Notificationswipe(driver);
 
             Console.WriteLine("App launched. All page objects initialised.");
             RecordingScript.StartRecording(driver);
         }
+
+        // ═════════════════════════════════════════════════════════════════════
+        // TEST
+        // ═════════════════════════════════════════════════════════════════════
 
         // ═════════════════════════════════════════════════════════════════════
         // TEST
@@ -182,6 +187,7 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             dashboard.EnterAndClearAmount200();
             dashboard.ClickOnLeftIcons();
             dashboard.ClickOnLeftIcons();
+            Thread.Sleep(5000);
             dashboard.ClickCrossBackButton();
 
             Logout();
@@ -215,13 +221,13 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             qrPage.TapBackButton();
             qrPage.TapNavigationBackButton();
 
-            //Logout();
+            Logout();
 
             //// ══════════════════════════════════════════════════════════════════
             //// ══════════════════════════════════════════════════════════════════
             //// FLOW 8 — Add Money via QR: User 2 scans from library + pays
             //// ══════════════════════════════════════════════════════════════════
-            Console.WriteLine("=== FLOW 8: QR code – User 2 (scan + pay) ===");
+            // Console.WriteLine("=== FLOW 8: QR code – User 2 (scan + pay) ===");
 
             Login("3364646412", "3889");
 
@@ -237,16 +243,25 @@ namespace POM_Mobile_App_Automate_Stage.CompleteMethod
             qrPage.ScrollAndTapPayButton();
             dashboardFull.EnterOtp("039167");
             dashboardFull.ClickProceedNextButton();
-            Notificationswipe notificationSwipe = new Notificationswipe(driver);
-            notificationSwipe.SwipeNotificationRight();
-            dashboardFull.ClickGoToDashboard();
-            notificationSwipe.ClickThirdIcon();
 
-            notificationSwipe.ScrollDown();
-            qrPage.ClickLeftHeaderIcon();
+
+
+            dashboardFull.ClickGoToDashboard();
+
+            //  qrPage.ClickLeftIcon();
+            notification.ClickThirdIcon();
+            Tapagains tapActions = new Tapagains(driver);
+
+            // Click the clIcon once
+            tapActions.ClickClIcon();
+
+            // Click tvIbanCopy 5 times
+            tapActions.ClickTvIbanCopyMultipleTimes();
+            qrPage.ClickLeftIcon();
+            qrPage.ClickLeftIcon();
             dashboard.ClickOnBalanceEye();
 
-            Logout();
+             Logout();
 
             // ══════════════════════════════════════════════════════════════════
             // FLOW 9 — Add Beneficiary (invalid IBAN → error, valid IBAN → saved)
